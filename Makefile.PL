@@ -2,7 +2,7 @@
 use strict;
 use warnings;
 
-BEGIN { require 5.10.0; }
+use 5.010000;
 
 use ExtUtils::MakeMaker 6.30;
 
@@ -26,6 +26,7 @@ my %WriteMakefileArgs = (
   'PREREQ_PM' => {
     'DateTime' => '0',
     'DateTime::Format::Mail' => '0',
+    'Devel::PartialDump' => '0',
     'Email::Address' => '0',
     'Email::MIME::Encodings' => '0',
     'Email::MessageID' => '0',
@@ -34,11 +35,13 @@ my %WriteMakefileArgs = (
     'MIME::QuotedPrint' => '0',
     'Moose' => '0',
     'MooseX::Params::Validate' => '0',
+    'MooseX::StrictConstructor' => '0',
     'MooseX::Types' => '0',
     'MooseX::Types::Common::String' => '0',
+    'Sub::Exporter' => '0',
     'namespace::autoclean' => '0'
   },
-  'VERSION' => '0.01',
+  'VERSION' => '0.02',
   'test' => {
     'TESTS' => 't/*.t'
   }

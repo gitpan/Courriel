@@ -1,6 +1,6 @@
 package Courriel::Role::Part;
 BEGIN {
-  $Courriel::Role::Part::VERSION = '0.01';
+  $Courriel::Role::Part::VERSION = '0.02';
 }
 
 use strict;
@@ -9,15 +9,17 @@ use namespace::autoclean;
 
 use Courriel::ContentType;
 use Courriel::Disposition;
+use Courriel::Helpers qw( parse_header_with_attributes );
 
 use Courriel::Types qw( NonEmptyStr );
 
 use Moose::Role;
 
-requires qw( _build_content_type _content_as_string );
+requires qw( _default_mime_type _content_as_string );
 
 has headers => (
-    is       => 'ro',
+    is       => 'rw',
+    writer   => '_set_headers',
     does     => 'Courriel::Headers',
     required => 1,
 );
@@ -30,11 +32,12 @@ has container => (
 );
 
 has content_type => (
-    is      => 'ro',
-    isa     => 'Courriel::ContentType',
-    lazy    => 1,
-    builder => '_build_content_type',
-    handles => [qw( mime_type charset )],
+    is        => 'ro',
+    isa       => 'Courriel::ContentType',
+    lazy      => 1,
+    builder   => '_build_content_type',
+    predicate => '_has_content_type',
+    handles   => [qw( mime_type charset )],
 );
 
 has encoding => (
@@ -50,6 +53,51 @@ sub as_string {
           $self->headers()->as_string()
         . $Courriel::Helpers::CRLF
         . $self->_content_as_string();
+}
+
+sub _build_content_type {
+    my $self = shift;
+
+    my @ct = $self->headers()->get('Content-Type');
+    if ( @ct > 1 ) {
+        die 'This part defines more than one Content-Type header.';
+    }
+
+    my ( $mime, $attr )
+        = defined $ct[0]
+        ? parse_header_with_attributes( $ct[0] )
+        : ( 'text/plain', {} );
+
+    return Courriel::ContentType->new(
+        mime_type  => $mime,
+        attributes => $attr,
+    );
+}
+
+after BUILD => sub {
+    my $self = shift;
+
+    $self->_maybe_set_content_type_in_headers();
+
+    return;
+};
+
+after _set_headers => sub {
+    my $self = shift;
+
+    $self->_maybe_set_content_type_in_headers();
+
+    return;
+};
+
+sub _maybe_set_content_type_in_headers {
+    my $self = shift;
+
+    return unless $self->_has_content_type();
+
+    $self->headers()
+        ->replace(
+        'Content-Type' => $self->content_type()->as_header_value() );
 }
 
 1;

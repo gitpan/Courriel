@@ -6,6 +6,7 @@ use Test::Fatal;
 use Test::More 0.88;
 
 use Courriel;
+use Courriel::Builder;
 use Courriel::Helpers;
 
 my $crlf = $Courriel::Helpers::CRLF;
@@ -71,6 +72,7 @@ Content-Type: multipart/alternative; boundary=20cf3071cfd06272ae04a46c9306
 
 --20cf3071cfd06272ae04a46c9306
 Content-Type: text/plain; charset=ISO-8859-1
+Content-Disposition: inline
 
 This is a test email.
 
@@ -78,6 +80,7 @@ It has some *bold* text.
 
 --20cf3071cfd06272ae04a46c9306
 Content-Type: text/html; charset=ISO-8859-1
+Content-Disposition: inline
 
 This is a test email.<br><br>It has some <b>bold</b> text.<br><br>
 
@@ -381,6 +384,42 @@ EOF
             time_zone => '-0500',
         ),
         'got read_datetime from content disposition'
+    );
+}
+
+{
+    my $email = build_email(
+        plain_body('foo'),
+        attach( content => 'some content' ),
+        attach( content => 'some more content' ),
+    );
+
+    is(
+        $email->content_type()->mime_type(),
+        'multipart/mixed',
+        'email is multipart/mixed'
+    );
+
+    my @parts = $email->all_parts_matching( sub { 1 } );
+
+    is(
+        scalar @parts, 4,
+        'email has 4 parts'
+    );
+
+    my $clone = $email->clone_without_attachments();
+
+    is(
+        $clone->content_type()->mime_type(),
+        'text/plain',
+        'after clone type is text/plain'
+    );
+
+    @parts = $clone->all_parts_matching( sub { 1 } );
+
+    is(
+        scalar @parts, 1,
+        'email has 1 part after clone'
     );
 }
 

@@ -1,6 +1,6 @@
 package Courriel::Part::Single;
 BEGIN {
-  $Courriel::Part::Single::VERSION = '0.01';
+  $Courriel::Part::Single::VERSION = '0.02';
 }
 
 use strict;
@@ -14,41 +14,72 @@ use MIME::Base64 ();
 use MIME::QuotedPrint ();
 
 use Moose;
+use MooseX::StrictConstructor;
 
 with 'Courriel::Role::Part';
 
 has content => (
-    is       => 'ro',
-    isa      => StringRef,
-    init_arg => undef,
-    lazy     => 1,
-    builder  => '_build_content',
+    is        => 'ro',
+    isa       => StringRef,
+    coerce    => 1,
+    lazy      => 1,
+    builder   => '_build_content',
+    predicate => '_has_content',
 );
 
-has raw_content => (
-    is       => 'ro',
-    isa      => StringRef,
-    coerce   => 1,
-    required => 1,
-    init_arg => 'raw_content',
+has encoded_content => (
+    is        => 'ro',
+    isa       => StringRef,
+    coerce    => 1,
+    lazy      => 1,
+    builder   => '_build_encoded_content',
+    predicate => '_has_encoded_content',
 );
 
 has disposition => (
-    is       => 'ro',
-    isa      => 'Courriel::Disposition',
-    lazy     => 1,
-    init_arg => undef,
-    builder  => '_build_disposition',
-    handles  => [qw( is_attachment is_inline filename )],
+    is        => 'ro',
+    isa       => 'Courriel::Disposition',
+    lazy      => 1,
+    builder   => '_build_disposition',
+    predicate => '_has_disposition',
+    handles   => [qw( is_attachment is_inline filename )],
 );
 
 sub BUILD {
     my $self = shift;
 
-    ${ $self->raw_content() }
-        =~ s/$Courriel::Helpers::LINE_SEP_RE/$Courriel::Helpers::CRLF/g;
+    unless ( $self->_has_content() || $self->_has_encoded_content() ) {
+        die
+            'You must provide a content or encoded_content parameter when constructing a Courriel::Part::Single object.';
+    }
+
+    ${ $self->content() }
+        =~ s/$Courriel::Helpers::LINE_SEP_RE/$Courriel::Helpers::CRLF/g
+        if $self->_has_content();
+
+    ${ $self->encoded_content() }
+        =~ s/$Courriel::Helpers::LINE_SEP_RE/$Courriel::Helpers::CRLF/g
+        if $self->_has_encoded_content();
+
+    $self->_maybe_set_disposition_in_headers();
 
     return;
+}
+
+after _set_headers => sub {
+    my $self = shift;
+
+    $self->_maybe_set_disposition_in_headers();
+};
+
+sub _maybe_set_disposition_in_headers {
+    my $self = shift;
+
+    return unless $self->_has_disposition();
+
+    $self->headers()
+        ->replace(
+        'Content-Disposition' => $self->disposition()->as_header_value() );
 }
 
 sub _build_disposition {
@@ -72,8 +103,8 @@ sub _build_disposition {
 
 sub is_multipart {0}
 
-sub _build_content_type {
-    return Courriel::ContentType->new( mime_type => 'text/plain' );
+sub _default_mime_type {
+    return 'text/plain';
 }
 
 {
@@ -84,12 +115,27 @@ sub _build_content_type {
 
         my $encoding = $self->encoding();
 
-        return $self->raw_content() if $unencoded{ lc $encoding };
+        return $self->encoded_content() if $unencoded{ lc $encoding };
 
         return \(
             Email::MIME::Encodings::decode(
                 $encoding,
-                ${ $self->raw_content() }
+                ${ $self->encoded_content() }
+            )
+        );
+    }
+
+    sub _build_encoded_content {
+        my $self = shift;
+
+        my $encoding = $self->encoding();
+
+        return $self->content() if $unencoded{ lc $encoding };
+
+        return \(
+            Email::MIME::Encodings::encode(
+                $encoding,
+                ${ $self->content() }
             )
         );
     }
@@ -98,7 +144,7 @@ sub _build_content_type {
 sub _content_as_string {
     my $self = shift;
 
-    return ${ $self->raw_content() };
+    return ${ $self->encoded_content() };
 }
 
 __PACKAGE__->meta()->make_immutable();
@@ -117,7 +163,7 @@ Courriel::Part::Single - A part which does not contain other parts, only content
 
 =head1 VERSION
 
-version 0.01
+version 0.02
 
 =head1 SYNOPSIS
 
@@ -136,13 +182,18 @@ content.
 
 This class provides the following methods:
 
-=head1 Courriel::Part::Single->new( ... )
+=head2 Courriel::Part::Single->new( ... )
 
 This method creates a new part object. It accepts the following parameters:
 
 =over 4
 
-=item * raw_content
+=item * content
+
+This can either be a string or a reference to a scalar. Any reference passed
+may be modified.
+
+=item * encoded_content
 
 This can either be a string or a reference to a scalar. Any reference passed
 may be modified.
@@ -167,16 +218,20 @@ A L<Courriel::Headers> object containing headers for this part.
 
 =back
 
+You must pass a C<content> or C<encoded_content> value when creating a new part,
+but there's really no point in passing both.
+
 =head2 $part->content()
 
 This returns returns a reference to a scalar containing the decoded content
 for the part. If no decoding was necessary, this will contain the same
-reference as C<raw_content()>.
+reference as C<encoded_content()>.
 
-=head2 $part->raw_content()
+=head2 $part->encoded_content()
 
 This returns returns a reference to a scalar containing the raw content for
-the part, without any decoding.
+the part, without any decoding. If no encoding was necessary, this will
+contain the same reference as C<encoded_content()>.
 
 =head2 $part->mime_type()
 

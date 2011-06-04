@@ -1,24 +1,27 @@
 package Courriel::Part::Multipart;
 BEGIN {
-  $Courriel::Part::Multipart::VERSION = '0.01';
+  $Courriel::Part::Multipart::VERSION = '0.02';
 }
 
 use strict;
 use warnings;
 use namespace::autoclean;
 
+use Courriel::Helpers qw( unique_boundary );
 use Courriel::Types qw( NonEmptyStr );
 use Email::MessageID;
 
 use Moose;
+use MooseX::StrictConstructor;
 
 with 'Courriel::Role::Part', 'Courriel::Role::HasParts';
 
 has boundary => (
-    is      => 'ro',
-    isa     => NonEmptyStr,
-    lazy    => 1,
-    builder => '_build_boundary',
+    is        => 'ro',
+    isa       => NonEmptyStr,
+    lazy      => 1,
+    builder   => '_build_boundary',
+    predicate => '_has_boundary',
 );
 
 has preamble => (
@@ -33,12 +36,25 @@ has epilogue => (
     predicate => 'has_epilogue',
 );
 
+sub BUILD {
+    my $self = shift;
+
+    # XXX - this is a nasty hack but I'm not sure if it can better. We want
+    # the boundary in the ContentType object to match the one in this
+    # part. There are more such hacks to come.
+    if ( $self->_has_boundary() && $self->_has_content_type() ) {
+        $self->content_type()->_attributes()->{boundary} = $self->boundary();
+    }
+
+    return;
+}
+
 sub is_attachment {0}
 sub is_inline     {0}
 sub is_multipart  {1}
 
-sub _build_content_type {
-    return Courriel::ContentType->new( mime_type => 'multipart/mixed' );
+sub _default_mime_type {
+    return 'multipart/mixed';
 }
 
 sub _content_as_string {
@@ -64,8 +80,25 @@ sub _content_as_string {
 }
 
 sub _build_boundary {
-    return Email::MessageID->new()->user();
+    my $self = shift;
+
+    my $attr = $self->content_type()->_attributes();
+
+    return $attr->{boundary} //= unique_boundary();
 }
+
+around _build_content_type => sub {
+    my $orig = shift;
+    my $self = shift;
+
+    my $ct = $self->$orig(@_);
+
+    return $ct unless $self->_has_boundary();
+
+    $ct->_attributes()->{boundary} = $self->boundary();
+
+    return $ct;
+};
 
 __PACKAGE__->meta()->make_immutable();
 
@@ -83,7 +116,7 @@ Courriel::Part::Multipart - A part which contains other parts
 
 =head1 VERSION
 
-version 0.01
+version 0.02
 
 =head1 SYNOPSIS
 
@@ -100,7 +133,7 @@ This class represents a multipart email part which contains other parts.
 
 This class provides the following methods:
 
-=head1 Courriel::Part::Multipart->new( ... )
+=head2 Courriel::Part::Multipart->new( ... )
 
 This method creates a new part object. It accepts the following parameters:
 

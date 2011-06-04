@@ -1,17 +1,19 @@
 package Courriel::Disposition;
 BEGIN {
-  $Courriel::Disposition::VERSION = '0.01';
+  $Courriel::Disposition::VERSION = '0.02';
 }
 
 use strict;
 use warnings;
 use namespace::autoclean;
 
+use Courriel::Helpers qw( quote_and_escape_attribute_value );
 use Courriel::Types qw( Bool HashRef Maybe NonEmptyStr );
 use DateTime;
 use DateTime::Format::Mail;
 
 use Moose;
+use MooseX::StrictConstructor;
 
 has disposition => (
     is       => 'ro',
@@ -78,6 +80,21 @@ has filename => (
     }
 }
 
+sub as_header_value {
+    my $self = shift;
+
+    my $string = $self->disposition();
+
+    my $attr = $self->_attributes();
+
+    for my $k ( sort keys %{$attr} ) {
+        my $val = quote_and_escape_attribute_value( $attr->{$k} );
+        $string .= qq[; $k=$val];
+    }
+
+    return $string;
+}
+
 __PACKAGE__->meta()->make_immutable();
 
 1;
@@ -94,7 +111,7 @@ Courriel::Disposition - The content disposition for an email part
 
 =head1 VERSION
 
-version 0.01
+version 0.02
 
 =head1 SYNOPSIS
 
@@ -131,7 +148,7 @@ Here are some typical headers:
 
 This class supports the following methods:
 
-=head2 Courriel::ContentDisposition->new( ... )
+=head2 Courriel::Disposition->new( ... )
 
 This method creates a new object. It accepts the following parameters:
 
@@ -179,6 +196,10 @@ Returns a hash (not a reference) of the attributes passed to the constructor.
 
 Given a key, returns the value of the named attribute. Obviously, this value
 can be C<undef> if the attribute doesn't exist.
+
+=head2 $disp->as_header_value()
+
+Returns the object as a string suitable for a header value (but not folded).
 
 =head1 AUTHOR
 

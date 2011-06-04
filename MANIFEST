@@ -9,6 +9,7 @@ README
 benchmarks/vs-email-mime
 dist.ini
 lib/Courriel.pm
+lib/Courriel/Builder.pm
 lib/Courriel/ContentType.pm
 lib/Courriel/Disposition.pm
 lib/Courriel/Headers.pm
@@ -20,9 +21,12 @@ lib/Courriel/Role/Headers.pm
 lib/Courriel/Role/Part.pm
 lib/Courriel/Types.pm
 lib/Courriel/Types/Internal.pm
+t/Builder.t
 t/Courriel.t
 t/Headers.t
+t/Part-Multipart.t
 t/Part-Single.t
+t/data/office.jpg
 t/release-cpan-changes.t
 t/release-no-tabs.t
 t/release-pod-coverage.t

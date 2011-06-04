@@ -1,6 +1,6 @@
 package Courriel::Types::Internal;
 BEGIN {
-  $Courriel::Types::Internal::VERSION = '0.01';
+  $Courriel::Types::Internal::VERSION = '0.02';
 }
 
 use strict;
@@ -10,6 +10,7 @@ use namespace::autoclean;
 use MooseX::Types -declare => [
     qw(
         Body
+        EmailAddressStr
         EvenArrayRef
         Headers
         Part
@@ -26,6 +27,13 @@ subtype Body,
 
 subtype Headers,
     as role_type('Courriel::Role::Headers');
+
+subtype EmailAddressStr,
+    as NonEmptyStr;
+
+coerce EmailAddressStr,
+    from class_type('Email::Address'),
+    via { $_->format() };
 
 subtype EvenArrayRef,
     as ArrayRef,
@@ -46,5 +54,4 @@ coerce StringRef,
     from Str,
     via { my $str = $_; \$str };
 #>>>
-
 1;

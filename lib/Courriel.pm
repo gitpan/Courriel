@@ -1,6 +1,6 @@
 package Courriel;
 BEGIN {
-  $Courriel::VERSION = '0.01';
+  $Courriel::VERSION = '0.02';
 }
 
 use 5.10.0;
@@ -22,9 +22,11 @@ use List::AllUtils qw( uniq );
 use MooseX::Params::Validate qw( validated_list );
 
 use Moose;
+use MooseX::StrictConstructor;
 
-has _part => (
-    is       => 'ro',
+has top_level_part => (
+    is       => 'rw',
+    writer   => '_replace_top_level_part',
     isa      => Part,
     init_arg => 'part',
     required => 1,
@@ -96,7 +98,7 @@ sub part_count {
     my $self = shift;
 
     return $self->is_multipart()
-        ? $self->_part()->part_count()
+        ? $self->top_level_part()->part_count()
         : 1;
 }
 
@@ -104,8 +106,58 @@ sub parts {
     my $self = shift;
 
     return $self->is_multipart()
-        ? $self->_part()->parts()
-        : $self->_part();
+        ? $self->top_level_part()->parts()
+        : $self->top_level_part();
+}
+
+sub clone_without_attachments {
+    my $self = shift;
+
+    my $plain_body = $self->plain_body_part();
+    my $html_body  = $self->html_body_part();
+
+    my $headers = $self->headers();
+
+    if ( $plain_body && $html_body ) {
+        my $ct = Courriel::ContentType->new(
+            mime_type  => 'multipart/alternative',
+            attributes => { boundary => unique_boundary() },
+        );
+
+        return Courriel->new(
+            part => Courriel::Part::Multipart->new(
+                content_type => $ct,
+                headers      => $headers,
+                parts        => [ $plain_body, $html_body ],
+            )
+        );
+    }
+    elsif ($plain_body) {
+        $headers->replace(
+            'Content-Transfer-Encoding' => $plain_body->encoding() );
+
+        return Courriel->new(
+            part => Courriel::Part::Single->new(
+                content_type    => $plain_body->content_type(),
+                headers         => $headers,
+                encoded_content => $plain_body->encoded_content(),
+            )
+        );
+    }
+    elsif ($html_body) {
+        $headers->replace(
+            'Content-Transfer-Encoding' => $html_body->encoding() );
+
+        return Courriel->new(
+            part => Courriel::Part::Single->new(
+                content_type    => $html_body->content_type(),
+                headers         => $headers,
+                encoded_content => $html_body->encoded_content(),
+            )
+        );
+    }
+
+    die "Cannot find a text or html body in this email!";
 }
 
 sub _build_subject {
@@ -198,12 +250,53 @@ sub first_part_matching {
     my $self = shift;
     my $match = shift;
 
-    my @parts = $self->_part();
+    my @parts = $self->top_level_part();
 
     for ( my $part = shift @parts; $part; $part = shift @parts ) {
         return $part if $match->($part);
 
         push @parts, $part->parts() if $part->is_multipart();
+    }
+}
+
+sub all_parts_matching {
+    my $self = shift;
+    my $match = shift;
+
+    my @parts = $self->top_level_part();
+
+    my @match;
+    for ( my $part = shift @parts; $part; $part = shift @parts ) {
+        push @match, $part if $match->($part);
+
+        push @parts, $part->parts() if $part->is_multipart();
+    }
+
+    return @match;
+}
+
+{
+    my @spec = ( text => { isa => StringRef, coerce => 1 } );
+
+    # This is needed for Email::Abstract compatibility but it's a godawful
+    # idea, and even Email::Abstract says not to do this.
+    #
+    # It's much safer to just make a new Courriel object from scratch.
+    sub replace_body {
+        my $self = shift;
+        my ($text) = validated_list(
+            \@_,
+            @spec,
+        );
+
+        my $part = Courriel::Part::Single->new(
+            headers         => $self->headers(),
+            encoded_content => $text,
+        );
+
+        $self->_replace_top_level_part($part);
+
+        return;
     }
 }
 
@@ -268,19 +361,18 @@ sub _parse_parts {
     my $text    = shift;
     my $headers = shift;
 
-    my $ct = $class->_content_type_from_headers($headers);
+    my ( $mime, $ct_attr ) = $class->_content_type_from_headers($headers);
 
-    if ( $ct->mime_type() !~ /^multipart/ ) {
+    if ( $mime !~ /^multipart/ ) {
         return Courriel::Part::Single->new(
-            content_type => $ct,
-            headers      => $headers,
-            raw_content  => $text,
+            headers     => $headers,
+            encoded_content => $text,
         );
     }
 
-    my $boundary = $ct->attribute('boundary')
+    my $boundary = $ct_attr->{boundary}
         // die q{The message's mime type claims this is a multipart message (}
-        . $ct->mime_type()
+        . $mime
         . q{) but it does not specify a boundary.};
 
     my ( $preamble, $all_parts, $epilogue ) = ${$text} =~ /
@@ -297,8 +389,7 @@ sub _parse_parts {
         unless @part_text;
 
     return Courriel::Part::Multipart->new(
-        content_type => $ct,
-        headers      => $headers,
+        headers => $headers,
         (
                    defined $preamble
                 && length $preamble
@@ -323,15 +414,9 @@ sub _content_type_from_headers {
         die 'This email defines more than one Content-Type header.';
     }
 
-    my ( $mime_type, $attributes )
-        = defined $ct[0]
+    return defined $ct[0]
         ? parse_header_with_attributes( $ct[0] )
         : ( 'text/plain', {} );
-
-    return Courriel::ContentType->new(
-        mime_type  => $mime_type,
-        attributes => $attributes,
-    );
 }
 
 __PACKAGE__->meta()->make_immutable();
@@ -350,7 +435,7 @@ Courriel - High level email parsing and manipulation
 
 =head1 VERSION
 
-version 0.01
+version 0.02
 
 =head1 SYNOPSIS
 
@@ -362,7 +447,7 @@ version 0.01
 
     print $email->datetime()->year();
 
-    if ( my $part = $email->text_body_part() ) {
+    if ( my $part = $email->plain_body_part() ) {
         print ${ $part->content() };
     }
 
@@ -401,6 +486,12 @@ Returns the number of parts this email contains.
 
 Returns true if the top-level part is a multipart part, false otherwise.
 
+=head2 $email->top_level_part()
+
+Returns the actual top level part for the object. You're probably better off
+just calling C<< $email->parts() >> most of the time, since when the email is
+multipart, the top level part is just a container.
+
 =head2 $email->subject()
 
 Returns the email's Subject header value, or C<undef> if it doesn't have one.
@@ -435,6 +526,11 @@ mime type of "text/plain" and an inline disposition, if one exists.
 This returns the first L<Courriel::Part::Single> object in the email with a
 mime type of "text/html" and an inline disposition, if one exists.
 
+=head2 $email->clone_without_attachments()
+
+Returns a new Courriel object that only contains inline parts from the
+original email, effectively removing all attachments.
+
 =head2 $email->first_part_matching( sub { ... } )
 
 Given a subroutine reference, this method calls that subroutine for each part
@@ -442,6 +538,16 @@ in the email, in a depth-first search.
 
 The subroutine receives the part as its only argument. If it returns true,
 this method returns that part.
+
+=head2 $email->all_parts_matching( sub { ... } )
+
+Given a subroutine reference, this method calls that subroutine for each part
+in the email, in a depth-first search.
+
+The subroutine receives the part as its only argument. If it returns true,
+this method includes that part.
+
+This method returns all of the parts that match the subroutine.
 
 =head2 $email->content_type()
 
@@ -464,29 +570,6 @@ This release is still rough, and I have some plans for additional features:
 
 Some more methods for walking/collecting multiple parts would be useful.
 
-=head2 Attachment Stripping
-
-I plan to add an C<< $email->strip_attachments() >> method that actually works
-properly, unlike L<Email::MIME::Attachment::Stripper>. This method will leave
-behind I<all> inline parts, including their containers (if they're in a
-"multipart/alternative" part, for example).
-
-=head2 Email Building
-
-As of this release, the distro does not yet include any high-level method for
-building complicated emails from code. I plan to write some sort of sugar
-layer like:
-
-    build_email(
-        subject('Foo'),
-        to( 'foo@example.com', 'bar@example.com' ),
-        from('joe@example.com'),
-        text_body(...),
-        html_body(...),
-        attach('path/to/image.jpg'),
-        attach('path/to/spreadsheet.xls'),
-    );
-
 =head2 More?
 
 Stay tuned for details.
@@ -500,8 +583,9 @@ There a lot of email modules/distros on CPAN. Why didn't I use/fix one of them?
 =item * L<Mail::Box>
 
 This one probably does everything this module does and more, but it's really,
-really big and complicated. If you need it, it's great, but I generally find
-it to be too much module for me.
+really big and complicated, forcing the end user to make a lot of choices just
+to get started. If you need it, it's great, but I generally find it to be too
+much module for me.
 
 =item * L<Email::Simple> and L<Email::MIME>
 

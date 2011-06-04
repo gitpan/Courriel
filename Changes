@@ -1,3 +1,42 @@
+0.02     2011-06-04
+
+- Added all_parts_matching() method to Courriel class.
+
+- Added clone_without_attachments() method to Courriel class.
+
+- The Courriel::Part::Single attribute raw_content has been renamed as
+  encoded_content.
+
+- The text_body_part() method is now called plain_body_part().
+
+- The add() and unshift() methods in Courriel::Headers now accept only one
+  value.
+
+- Added Courriel::Headers->replace as a convenience method.
+
+- A header with attributes (like Content-Type) can escape values inside a
+  quoted string, like value="foo \" bar". Courriel wasn't unescaping these
+  values.
+
+- It is now possible to pass a Courriel::Disposition object explicitly when
+  constructing a Courriel::Part::Single object. The docs said this was
+  possible in 0.01, but the parameter was just ignored.
+
+- If a part is created with an explicit content_type and/or disposition
+  object, the part's headers will be updated so that the Content-Type and
+  Content-Disposition match the given object.
+
+- The boundary for a Multipart part and the boundary in its ContentType's
+  attributes will always be the same.
+
+- All classes now use MooseX::StrictConstructor.
+
+- Some hacks to make it possible for Courriel to play nice with
+  Email::Abstract.
+
+- Fixed some small doc errors.
+
+
 0.01     2011-05-31
 
 - First release upon an unsuspecting world.

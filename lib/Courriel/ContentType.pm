@@ -1,15 +1,17 @@
 package Courriel::ContentType;
 BEGIN {
-  $Courriel::ContentType::VERSION = '0.01';
+  $Courriel::ContentType::VERSION = '0.02';
 }
 
 use strict;
 use warnings;
 use namespace::autoclean;
 
+use Courriel::Helpers qw( quote_and_escape_attribute_value );
 use Courriel::Types qw( HashRef NonEmptyStr );
 
 use Moose;
+use MooseX::StrictConstructor;
 
 has mime_type => (
     is       => 'ro',
@@ -43,6 +45,21 @@ sub _build_charset {
     return $self->_attributes()->{charset} // 'us-ascii';
 }
 
+sub as_header_value {
+    my $self = shift;
+
+    my $string = $self->mime_type();
+
+    my $attr = $self->_attributes();
+
+    for my $k ( sort keys %{$attr} ) {
+        my $val = quote_and_escape_attribute_value( $attr->{$k} );
+        $string .= qq[; $k=$val];
+    }
+
+    return $string;
+}
+
 __PACKAGE__->meta()->make_immutable();
 
 1;
@@ -59,7 +76,7 @@ Courriel::ContentType - The content type for an email part
 
 =head1 VERSION
 
-version 0.01
+version 0.02
 
 =head1 SYNOPSIS
 
@@ -126,6 +143,10 @@ Returns a hash (not a reference) of the attributes passed to the constructor.
 
 Given a key, returns the value of the named attribute. Obviously, this value
 can be C<undef> if the attribute doesn't exist.
+
+=head2 $ct->as_header_value()
+
+Returns the object as a string suitable for a header value (but not folded).
 
 =head1 AUTHOR
 
