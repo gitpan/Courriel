@@ -1,6 +1,6 @@
 package Courriel;
 BEGIN {
-  $Courriel::VERSION = '0.04';
+  $Courriel::VERSION = '0.05';
 }
 
 use 5.10.0;
@@ -11,7 +11,7 @@ use namespace::autoclean;
 
 use Courriel::ContentType;
 use Courriel::Headers;
-use Courriel::Helpers qw( parse_header_with_attributes );
+use Courriel::Helpers qw( parse_header_with_attributes unique_boundary );
 use Courriel::Part::Multipart;
 use Courriel::Part::Single;
 use Courriel::Types qw( ArrayRef Bool Headers Maybe NonEmptyStr Part StringRef );
@@ -435,7 +435,7 @@ Courriel - High level email parsing and manipulation
 
 =head1 VERSION
 
-version 0.04
+version 0.05
 
 =head1 SYNOPSIS
 

@@ -1,6 +1,6 @@
 package Courriel::ContentType;
 BEGIN {
-  $Courriel::ContentType::VERSION = '0.04';
+  $Courriel::ContentType::VERSION = '0.05';
 }
 
 use strict;
@@ -76,7 +76,7 @@ Courriel::ContentType - The content type for an email part
 
 =head1 VERSION
 
-version 0.04
+version 0.05
 
 =head1 SYNOPSIS
 
