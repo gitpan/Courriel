@@ -30,6 +30,7 @@ my %WriteMakefileArgs = (
     'Email::Address' => '0',
     'Email::MIME::Encodings' => '0',
     'Email::MessageID' => '0',
+    'File::LibMagic' => '0',
     'List::AllUtils' => '0',
     'MIME::Base64' => '0',
     'MIME::QuotedPrint' => '0',
@@ -41,7 +42,7 @@ my %WriteMakefileArgs = (
     'Sub::Exporter' => '0',
     'namespace::autoclean' => '0'
   },
-  'VERSION' => '0.03',
+  'VERSION' => '0.04',
   'test' => {
     'TESTS' => 't/*.t'
   }

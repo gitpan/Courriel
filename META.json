@@ -27,6 +27,7 @@
             "Email::Address" : 0,
             "Email::MIME::Encodings" : 0,
             "Email::MessageID" : 0,
+            "File::LibMagic" : 0,
             "List::AllUtils" : 0,
             "MIME::Base64" : 0,
             "MIME::QuotedPrint" : 0,
@@ -60,6 +61,6 @@
          "web" : "http://git.urth.org/Courriel.git"
       }
    },
-   "version" : "0.03"
+   "version" : "0.04"
 }
 
