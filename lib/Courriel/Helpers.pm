@@ -1,6 +1,6 @@
 package Courriel::Helpers;
 BEGIN {
-  $Courriel::Helpers::VERSION = '0.05';
+  $Courriel::Helpers::VERSION = '0.06';
 }
 
 use strict;

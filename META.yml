@@ -3,6 +3,7 @@ abstract: 'High level email parsing and manipulation'
 author:
   - 'Dave Rolsky <autarch@urth.org>'
 build_requires:
+  File::Slurp: 0
   Test::Differences: 0
   Test::Fatal: 0
   Test::More: 0.88
@@ -37,4 +38,4 @@ requires:
 resources:
   bugtracker: http://rt.cpan.org/NoAuth/Bugs.html?Dist=Courriel
   repository: git://git.urth.org/Courriel.git
-version: 0.05
+version: 0.06

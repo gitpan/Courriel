@@ -1,6 +1,6 @@
 package Courriel::Role::Part;
 BEGIN {
-  $Courriel::Role::Part::VERSION = '0.05';
+  $Courriel::Role::Part::VERSION = '0.06';
 }
 
 use strict;
@@ -38,12 +38,6 @@ has content_type => (
     builder   => '_build_content_type',
     predicate => '_has_content_type',
     handles   => [qw( mime_type charset )],
-);
-
-has encoding => (
-    is      => 'ro',
-    isa     => NonEmptyStr,
-    default => '8bit',
 );
 
 sub as_string {

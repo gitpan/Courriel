@@ -1,6 +1,6 @@
 package Courriel::Role::Headers;
 BEGIN {
-  $Courriel::Role::Headers::VERSION = '0.05';
+  $Courriel::Role::Headers::VERSION = '0.06';
 }
 
 use strict;

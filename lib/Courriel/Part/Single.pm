@@ -1,6 +1,6 @@
 package Courriel::Part::Single;
 BEGIN {
-  $Courriel::Part::Single::VERSION = '0.05';
+  $Courriel::Part::Single::VERSION = '0.06';
 }
 
 use strict;
@@ -8,7 +8,7 @@ use warnings;
 use namespace::autoclean;
 
 use Courriel::Helpers qw( parse_header_with_attributes );
-use Courriel::Types qw( StringRef );
+use Courriel::Types qw( NonEmptyStr StringRef );
 use Email::MIME::Encodings;
 use MIME::Base64 ();
 use MIME::QuotedPrint ();
@@ -43,6 +43,13 @@ has disposition => (
     builder   => '_build_disposition',
     predicate => '_has_disposition',
     handles   => [qw( is_attachment is_inline filename )],
+);
+
+has encoding => (
+    is      => 'ro',
+    isa     => NonEmptyStr,
+    lazy    => 1,
+    default => '8bit',
 );
 
 sub BUILD {
@@ -176,7 +183,7 @@ Courriel::Part::Single - A part which does not contain other parts, only content
 
 =head1 VERSION
 
-version 0.05
+version 0.06
 
 =head1 SYNOPSIS
 
@@ -223,7 +230,8 @@ disposition. This will default to "inline" with no other attributes.
 
 =item * encoding
 
-The Content-Transfer-Encoding for this part. This defaults to "8bit".
+The Content-Transfer-Encoding for this part. This defaults to the value found
+in the part's headers, or "8bit" if no header is found.
 
 =item * headers
 
