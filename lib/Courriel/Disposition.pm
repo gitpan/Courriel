@@ -1,6 +1,6 @@
 package Courriel::Disposition;
 BEGIN {
-  $Courriel::Disposition::VERSION = '0.06';
+  $Courriel::Disposition::VERSION = '0.07';
 }
 
 use strict;
@@ -111,7 +111,7 @@ Courriel::Disposition - The content disposition for an email part
 
 =head1 VERSION
 
-version 0.06
+version 0.07
 
 =head1 SYNOPSIS
 

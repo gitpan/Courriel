@@ -1,6 +1,6 @@
 package Courriel::Part::Single;
 BEGIN {
-  $Courriel::Part::Single::VERSION = '0.06';
+  $Courriel::Part::Single::VERSION = '0.07';
 }
 
 use strict;
@@ -183,7 +183,7 @@ Courriel::Part::Single - A part which does not contain other parts, only content
 
 =head1 VERSION
 
-version 0.06
+version 0.07
 
 =head1 SYNOPSIS
 

@@ -1,6 +1,6 @@
 package Courriel::Types::Internal;
 BEGIN {
-  $Courriel::Types::Internal::VERSION = '0.06';
+  $Courriel::Types::Internal::VERSION = '0.07';
 }
 
 use strict;
