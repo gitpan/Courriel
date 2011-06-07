@@ -267,6 +267,37 @@ EOF
     my $text = <<'EOF';
 From autarch@gmail.com Sun May 29 11:22:29 2011
 MIME-Version: 1.0
+Resent-Date: Sun, 29 May 2011 11:22:23 -0500
+Message-ID: <BANLkTimjF2BDbOKO_2jFJsp6t+0KvqxCwQ@mail.gmail.com>
+Subject: Testing
+From: Dave Rolsky <autarch@gmail.com>
+To: Dave Rolsky <autarch@urth.org>
+Content-Type: text/plain
+Content-Transfer-Encoding: base64
+
+QmxhbmRpdGlpcyBhbWV0IHF1YWVyYXQgb21uaXMgdW5kZS4gTW9sbGl0aWEgb21uaXMgcXVhcyBp
+bnZlbnRvcmUgZG9sb3J1bSBxdWkgZXQgYXNwZXJpb3Jlcy4gRmFjaWxpcyBhdCBhY2N1c2FtdXMg
+bWludXMgdmVyaXRhdGlzIGltcGVkaXQgZG9sb3IuIFZlbGl0IG9tbmlzIG9mZmljaWEgdXQgdm9s
+dXB0YXRlbSB0ZW1wb3JlIHZvbHVwdGF0dW0gc2l0IGFjY3VzYW50aXVtLiBQZXJmZXJlbmRpcyBl
+eHBsaWNhYm8gbmloaWwgc3VudCBzZWQuDQoNClJlbSBkb2xvcmUgcmVwZWxsZW5kdXMgbW9kaSBu
+aWhpbCBkb2xvcmVtIGhhcnVtIHZvbHVwdGFzIG5vbi4gRXNzZSBzaW50IGV4ZXJjaXRhdGlvbmVt
+IHNpbWlsaXF1ZSBhbGlhcyBldC4gRWl1cyBhdXRlbSBhbGlxdWlkIGNvbnNlcXVhdHVyIG5hbSBo
+YXJ1bSBmdWdpYXQu
+EOF
+
+    my $email = Courriel->parse( text => \$text );
+
+    is(
+        $email->plain_body_part()->encoding(),
+        'base64',
+        'encoding is set from parsed header',
+    );
+}
+
+{
+    my $text = <<'EOF';
+From autarch@gmail.com Sun May 29 11:22:29 2011
+MIME-Version: 1.0
 Date: Sun, 29 May 2011 11:22:23 -0500
 Message-ID: <BANLkTimjF2BDbOKO_2jFJsp6t+0KvqxCwQ@mail.gmail.com>
 Subject: Testing
@@ -426,6 +457,17 @@ EOF
         scalar @parts, 1,
         'email has 1 part after clone'
     );
+
+    is(
+        $parts[0]->encoding(), 'base64',
+        'part is base64 encoded'
+    );
+
+    is_deeply(
+        [ $parts[0]->headers()->get('Content-Transfer-Encoding') ],
+        ['base64'],
+        'Content-Transfer encoding is base64'
+    );
 }
 
 {
@@ -462,6 +504,30 @@ EOF
     is(
         scalar @parts, 3,
         'email has 3 parts after clone'
+    );
+
+    my $plain = $clone->plain_body_part();
+    is(
+        $plain->encoding(), 'base64',
+        'plain part is base64 encoded'
+    );
+
+    is_deeply(
+        [ $plain->headers()->get('Content-Transfer-Encoding') ],
+        ['base64'],
+        'plain part Content-Transfer encoding is base64'
+    );
+
+    my $html = $clone->html_body_part();
+    is(
+        $html->encoding(), 'base64',
+        'html part is base64 encoded'
+    );
+
+    is_deeply(
+        [ $html->headers()->get('Content-Transfer-Encoding') ],
+        ['base64'],
+        'html part Content-Transfer encoding is base64'
     );
 }
 

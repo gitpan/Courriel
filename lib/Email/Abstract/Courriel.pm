@@ -1,12 +1,12 @@
 package Email::Abstract::Courriel;
 BEGIN {
-  $Email::Abstract::Courriel::VERSION = '0.09';
+  $Email::Abstract::Courriel::VERSION = '0.10';
 }
 
 use strict;
 use warnings;
 
-use Courriel 0.08;
+use Courriel;
 
 use parent 'Email::Abstract::Plugin';
 
@@ -58,15 +58,12 @@ Email::Abstract::Courriel - Email::Abstract wrapper for Courriel
 
 =head1 VERSION
 
-version 0.09
+version 0.10
 
 =head1 DESCRIPTION
 
 This module wraps the Courriel mail handling library with an abstract
 interface, to be used with L<Email::Abstract>.
-
-Note that Courriel doesn't really offer any simple way to set the email's
-body, so the C<set_body()> method will die if it is called.
 
 =head1 SEE ALSO
 

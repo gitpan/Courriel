@@ -24,6 +24,7 @@ lib/Courriel/Types/Internal.pm
 lib/Email/Abstract/Courriel.pm
 t/Builder.t
 t/Courriel.t
+t/Email-Sender.t
 t/Headers.t
 t/Part-Multipart.t
 t/Part-Single.t

@@ -1,6 +1,6 @@
 package Courriel;
 BEGIN {
-  $Courriel::VERSION = '0.09';
+  $Courriel::VERSION = '0.10';
 }
 
 use 5.10.0;
@@ -14,7 +14,8 @@ use Courriel::Headers;
 use Courriel::Helpers qw( parse_header_with_attributes unique_boundary );
 use Courriel::Part::Multipart;
 use Courriel::Part::Single;
-use Courriel::Types qw( ArrayRef Bool Headers Maybe NonEmptyStr Part StringRef );
+use Courriel::Types
+    qw( ArrayRef Bool Headers Maybe NonEmptyStr Part StringRef );
 use DateTime;
 use DateTime::Format::Mail;
 use Email::Address;
@@ -42,7 +43,7 @@ has top_level_part => (
 
 has subject => (
     is       => 'ro',
-    isa      => Maybe[NonEmptyStr],
+    isa      => Maybe [NonEmptyStr],
     init_arg => undef,
     lazy     => 1,
     builder  => '_build_subject',
@@ -80,7 +81,7 @@ has _recipients => (
 
 has plain_body_part => (
     is       => 'ro',
-    isa      => Maybe['Courriel::Part::Single'],
+    isa      => Maybe ['Courriel::Part::Single'],
     init_arg => undef,
     lazy     => 1,
     builder  => '_build_plain_body_part',
@@ -88,7 +89,7 @@ has plain_body_part => (
 
 has html_body_part => (
     is       => 'ro',
-    isa      => Maybe['Courriel::Part::Single'],
+    isa      => Maybe ['Courriel::Part::Single'],
     init_arg => undef,
     lazy     => 1,
     builder  => '_build_html_body_part',
@@ -128,7 +129,7 @@ sub clone_without_attachments {
             part => Courriel::Part::Multipart->new(
                 content_type => $ct,
                 headers      => $headers,
-                parts        => [ $plain_body, $html_body ],
+                parts => [ $plain_body, $html_body ],
             )
         );
     }
@@ -169,7 +170,7 @@ sub _build_subject {
         my $self = shift;
 
         # Stolen from Email::Date
-        my $raw_date
+        my $raw_date 
             = $self->headers()->get('Date')
             || $self->_find_date_received( $self->headers()->get('Received') )
             || $self->headers()->get('Resent-Date');
@@ -243,7 +244,7 @@ sub _build_html_body_part {
 }
 
 sub first_part_matching {
-    my $self = shift;
+    my $self  = shift;
     my $match = shift;
 
     my @parts = $self->top_level_part();
@@ -256,7 +257,7 @@ sub first_part_matching {
 }
 
 sub all_parts_matching {
-    my $self = shift;
+    my $self  = shift;
     my $match = shift;
 
     my @parts = $self->top_level_part();
@@ -330,7 +331,8 @@ sub _parse_headers {
     my $line_sep;
 
     # We want to ignore mbox message separators
-    ${$text} =~ s/^From .+ \d\d:\d\d:\d\d \d\d\d\d$Courriel::Helpers::LINE_SEP_RE//;
+    ${$text}
+        =~ s/^From .+ \d\d:\d\d:\d\d \d\d\d\d$Courriel::Helpers::LINE_SEP_RE//;
 
     if ( ${$text} =~ /(.+?)($Courriel::Helpers::LINE_SEP_RE)\2/s ) {
         $header_text = $1 . $2;
@@ -361,7 +363,7 @@ sub _parse_parts {
 
     if ( $mime !~ /^multipart/ ) {
         return Courriel::Part::Single->new(
-            headers     => $headers,
+            headers         => $headers,
             encoded_content => $text,
         );
     }
@@ -397,7 +399,7 @@ sub _parse_parts {
                 && $epilogue =~ /\S/ ? ( epilogue => $epilogue ) : ()
         ),
         boundary => $boundary,
-        parts    => [ map { $class->_parse( \$_ ) } @part_text ],
+        parts => [ map { $class->_parse( \$_ ) } @part_text ],
     );
 }
 
@@ -431,7 +433,7 @@ Courriel - High level email parsing and manipulation
 
 =head1 VERSION
 
-version 0.09
+version 0.10
 
 =head1 SYNOPSIS
 

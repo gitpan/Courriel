@@ -1,6 +1,6 @@
 package Courriel::Part::Multipart;
 BEGIN {
-  $Courriel::Part::Multipart::VERSION = '0.09';
+  $Courriel::Part::Multipart::VERSION = '0.10';
 }
 
 use strict;
@@ -65,13 +65,16 @@ sub _content_as_string {
         if $self->has_preamble();
 
     $content
-        .= '--'
+        .= $Courriel::Helpers::CRLF . '--'
         . $self->boundary()
         . $Courriel::Helpers::CRLF
         . $_->as_string()
         for $self->parts();
 
-    $content .= '--' . $self->boundary() . '--' . $Courriel::Helpers::CRLF;
+    $content
+        .= $Courriel::Helpers::CRLF . '--'
+        . $self->boundary() . '--'
+        . $Courriel::Helpers::CRLF;
 
     $content .= $self->epilogue() . $Courriel::Helpers::CRLF
         if $self->has_epilogue();
@@ -116,7 +119,7 @@ Courriel::Part::Multipart - A part which contains other parts
 
 =head1 VERSION
 
-version 0.09
+version 0.10
 
 =head1 SYNOPSIS
 
