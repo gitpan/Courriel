@@ -1,6 +1,6 @@
 package Courriel::Role::Part;
 BEGIN {
-  $Courriel::Role::Part::VERSION = '0.10';
+  $Courriel::Role::Part::VERSION = '0.11';
 }
 
 use strict;

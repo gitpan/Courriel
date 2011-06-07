@@ -1,6 +1,6 @@
 package Courriel;
 BEGIN {
-  $Courriel::VERSION = '0.10';
+  $Courriel::VERSION = '0.11';
 }
 
 use 5.10.0;
@@ -433,7 +433,7 @@ Courriel - High level email parsing and manipulation
 
 =head1 VERSION
 
-version 0.10
+version 0.11
 
 =head1 SYNOPSIS
 

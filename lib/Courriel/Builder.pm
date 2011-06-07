@@ -1,6 +1,6 @@
 package Courriel::Builder;
 BEGIN {
-  $Courriel::Builder::VERSION = '0.10';
+  $Courriel::Builder::VERSION = '0.11';
 }
 
 use strict;
@@ -146,6 +146,10 @@ sub _add_needed_headers {
     unless ( $keys{'message-id'} ) {
         push @{$headers},
             ( 'Message-Id' => Email::MessageID->new()->in_brackets() );
+    }
+
+    unless ( $keys{'mime-version'} ) {
+        push @{$headers}, ( 'MIME-Version' => '1.0' );
     }
 
     return;
@@ -469,7 +473,7 @@ Courriel::Builder - Build emails with sugar
 
 =head1 VERSION
 
-version 0.10
+version 0.11
 
 =head1 SYNOPSIS
 
