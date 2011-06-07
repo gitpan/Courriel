@@ -1,6 +1,6 @@
 package Courriel::Part::Single;
 BEGIN {
-  $Courriel::Part::Single::VERSION = '0.11';
+  $Courriel::Part::Single::VERSION = '0.12';
 }
 
 use strict;
@@ -10,6 +10,7 @@ use namespace::autoclean;
 use Courriel::Helpers qw( parse_header_with_attributes );
 use Courriel::Types qw( NonEmptyStr StringRef );
 use Email::MIME::Encodings;
+use Encode qw( decode encode );
 use MIME::Base64 ();
 use MIME::QuotedPrint ();
 
@@ -147,12 +148,18 @@ sub _default_mime_type {
 
         my $encoding = $self->encoding();
 
-        return $self->encoded_content_ref() if $unencoded{ lc $encoding };
+        my $bytes
+            = $unencoded{ lc $encoding }
+            ? $self->encoded_content()
+            : Email::MIME::Encodings::decode(
+            $encoding,
+            $self->encoded_content(),
+            );
 
         return \(
-            Email::MIME::Encodings::decode(
-                $encoding,
-                $self->encoded_content()
+            decode(
+                $self->content_type()->charset(),
+                $bytes,
             )
         );
     }
@@ -162,12 +169,17 @@ sub _default_mime_type {
 
         my $encoding = $self->encoding();
 
-        return $self->content_ref() if $unencoded{ lc $encoding };
+        my $bytes = encode(
+            $self->content_type()->charset(),
+            $self->content(),
+        );
+
+        return \$bytes if $unencoded{ lc $encoding };
 
         return \(
             Email::MIME::Encodings::encode(
                 $encoding,
-                $self->content(),
+                $bytes,
             )
         );
     }
@@ -203,7 +215,7 @@ Courriel::Part::Single - A part which does not contain other parts, only content
 
 =head1 VERSION
 
-version 0.11
+version 0.12
 
 =head1 SYNOPSIS
 
@@ -230,7 +242,8 @@ This method creates a new part object. It accepts the following parameters:
 
 =item * content
 
-This can either be a string or a reference to a scalar.
+This can either be a string or a reference to a scalar. It should be in Perl's
+native utf-8 encoding and I<not> a byte string.
 
 If you pass a reference, then the scalar underlying the reference may be
 modified, so don't pass in something you don't want modified.
@@ -268,7 +281,8 @@ but there's really no point in passing both.
 
 =head2 $part->content()
 
-This returns returns the decoded content for the part.
+This returns returns the decoded content for the part. It will be in Perl's
+native utf-8 encoding, decoded from whatever character set the content is in.
 
 =head2 $part->encoded_content()
 
@@ -318,14 +332,12 @@ part belongs, if any. This is set when the part is added to another object.
 =head2 $part->content_ref()
 
 This returns returns a reference to a scalar containing the decoded content
-for the part, without any decoding. If no encoding was necessary, this will
-contain the same reference as C<encoded_content_ref()>.
+for the part.
 
 =head2 $part->encoded_content_ref()
 
 This returns returns a reference to a scalar containing the encoded content
-for the part, without any decoding. If no encoding was necessary, this will
-contain the same reference as C<content_ref()>.
+for the part, without any decoding.
 
 =head2 $part->as_string()
 

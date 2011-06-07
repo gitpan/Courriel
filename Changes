@@ -1,3 +1,12 @@
+0.12     2011-06-07
+
+[BUG FIXES]
+
+- The value returned by Courriel::Part::Single->content() was not decoded to
+  Perl's native utf-8 character set. Similarly, when encoding content for
+  transfer, it was not first transformed to raw bytes.
+
+
 0.11     2011-06-07
 
 [BUG FIXES]
