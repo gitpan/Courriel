@@ -1,6 +1,6 @@
 package Courriel::Builder;
 BEGIN {
-  $Courriel::Builder::VERSION = '0.07';
+  $Courriel::Builder::VERSION = '0.08';
 }
 
 use strict;
@@ -435,8 +435,13 @@ sub _attachment_headers {
     my $content_id = shift;
 
     my @headers;
-    push @headers, ( 'Content-ID' => $content_id )
-        if defined $content_id;
+
+    if ( defined $content_id ) {
+        $content_id = "<$content_id>"
+            unless $content_id =~ /^<[^>]+>$/;
+
+        push @headers, ( 'Content-ID' => $content_id );
+    }
 
     return Courriel::Headers->new( headers => \@headers );
 }
@@ -464,7 +469,7 @@ Courriel::Builder - Build emails with sugar
 
 =head1 VERSION
 
-version 0.07
+version 0.08
 
 =head1 SYNOPSIS
 
@@ -611,6 +616,9 @@ attachment.
 This will set the Content-ID header for the attachment. If you're creating a
 HTML body with "cid:" scheme URLs, you'll need to set this for each attachment
 that the HTML body refers to.
+
+The id will be wrapped in angle brackets ("<id-goes-here>") when set as a
+header.
 
 =back
 

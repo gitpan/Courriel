@@ -1,6 +1,6 @@
 package Courriel;
 BEGIN {
-  $Courriel::VERSION = '0.07';
+  $Courriel::VERSION = '0.08';
 }
 
 use 5.10.0;
@@ -431,11 +431,11 @@ Courriel - High level email parsing and manipulation
 
 =head1 VERSION
 
-version 0.07
+version 0.08
 
 =head1 SYNOPSIS
 
-    my $email = Courriel->parse( text => \$text );
+    my $email = Courriel->parse( text => $raw_email );
 
     print $email->subject();
 
@@ -444,7 +444,7 @@ version 0.07
     print $email->datetime()->year();
 
     if ( my $part = $email->plain_body_part() ) {
-        print ${ $part->content() };
+        print $part->content();
     }
 
 =head1 DESCRIPTION
@@ -463,12 +463,13 @@ classes.
 
 This class provides the following methods:
 
-=head2 Courriel->parse( text => \$text )
+=head2 Courriel->parse( text => $raw_email )
 
 This parses the given text and returns a new Courriel object. The text can be
-provided as a string or a reference to a string. The scalar underlying the
-reference I<will> be modified, so don't pass in something you don't want
-modified.
+provided as a string or a reference to a string.
+
+If you pass a reference, then the scalar underlying the reference I<will> be
+modified, so don't pass in something you don't want modified.
 
 =head2 $email->parts()
 
