@@ -38,4 +38,4 @@ requires:
 resources:
   bugtracker: http://rt.cpan.org/NoAuth/Bugs.html?Dist=Courriel
   repository: git://git.urth.org/Courriel.git
-version: 0.08
+version: 0.09

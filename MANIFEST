@@ -21,6 +21,7 @@ lib/Courriel/Role/Headers.pm
 lib/Courriel/Role/Part.pm
 lib/Courriel/Types.pm
 lib/Courriel/Types/Internal.pm
+lib/Email/Abstract/Courriel.pm
 t/Builder.t
 t/Courriel.t
 t/Headers.t
