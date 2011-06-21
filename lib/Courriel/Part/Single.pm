@@ -1,6 +1,6 @@
 package Courriel::Part::Single;
 BEGIN {
-  $Courriel::Part::Single::VERSION = '0.12';
+  $Courriel::Part::Single::VERSION = '0.13';
 }
 
 use strict;
@@ -65,14 +65,6 @@ sub BUILD {
         die
             'You must provide a content or encoded_content parameter when constructing a Courriel::Part::Single object.';
     }
-
-    ${ $self->content_ref() }
-        =~ s/$Courriel::Helpers::LINE_SEP_RE/$Courriel::Helpers::CRLF/g
-        if $self->_has_content_ref();
-
-    ${ $self->encoded_content_ref() }
-        =~ s/$Courriel::Helpers::LINE_SEP_RE/$Courriel::Helpers::CRLF/g
-        if $self->_has_encoded_content_ref();
 
     if ( !$self->_has_encoding() ) {
         my @enc = $self->headers()->get('Content-Transfer-Encoding');
@@ -215,7 +207,7 @@ Courriel::Part::Single - A part which does not contain other parts, only content
 
 =head1 VERSION
 
-version 0.12
+version 0.13
 
 =head1 SYNOPSIS
 
@@ -278,6 +270,9 @@ A L<Courriel::Headers> object containing headers for this part.
 
 You must pass a C<content> or C<encoded_content> value when creating a new part,
 but there's really no point in passing both.
+
+It is strongly recommended that you pass a C<content> parameter and letting
+this module do the encoding for you internally.
 
 =head2 $part->content()
 

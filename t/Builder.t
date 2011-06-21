@@ -185,6 +185,28 @@ EOF
        'us-ascii',
         'correct charset detected for attachment'
     );
+
+    is(
+        $attachment->content(),
+        $pl_script,
+        'attachment content matches the original code'
+    );
+
+    like(
+        $email->as_string(),
+        qr{Content-Type:\s+multipart/mixed;\s+boundary=.+},
+        'Content-Type header for multipart email includes boundary'
+    );
+
+    my $parsed = Courriel->parse( text => $email->as_string() );
+    my $parsed_attachment
+        = $parsed->first_part_matching( sub { $_[0]->is_attachment() } );
+
+    is(
+        $parsed_attachment->content(),
+        $pl_script,
+        'attachment content survives round trip from string to object'
+    );
 }
 
 {
@@ -293,7 +315,10 @@ EOF
     my $email = build_email(
         subject('Test Subject'),
         plain_body('Foo'),
-        attach( file => 't/data/office.jpg', content_id => 'abc123' ),
+        attach(
+            file       => 't/data/office.jpg',
+            content_id => 'abc123',
+        ),
     );
 
     my $attachment
@@ -309,7 +334,10 @@ EOF
     my $email = build_email(
         subject('Test Subject'),
         plain_body('Foo'),
-        attach( file => 't/data/office.jpg', mime_type => 'w/tf' ),
+        attach(
+            file      => 't/data/office.jpg',
+            mime_type => 'w/tf',
+        ),
     );
 
     my $attachment
@@ -326,7 +354,8 @@ EOF
         subject('Test Subject'),
         plain_body('Foo'),
         attach(
-            file => 't/data/office.jpg', filename => 'something-else.jpg'
+            file     => 't/data/office.jpg',
+            filename => 'something-else.jpg',
         ),
     );
 

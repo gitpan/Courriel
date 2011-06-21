@@ -1,6 +1,6 @@
 package Courriel::Builder;
 BEGIN {
-  $Courriel::Builder::VERSION = '0.12';
+  $Courriel::Builder::VERSION = '0.13';
 }
 
 use strict;
@@ -116,7 +116,7 @@ use Sub::Exporter -setup => {
             );
         }
 
-        _add_needed_headers( \@headers );
+        _add_required_headers( \@headers );
 
         # XXX - a little incestuous but I don't really want to make this method
         # public, and delaying building the body part would make all the code more
@@ -133,7 +133,7 @@ sub _bad_value {
         . Devel::PartialDump->new()->dump( $_[0] );
 }
 
-sub _add_needed_headers {
+sub _add_required_headers {
     my $headers = shift;
 
     my %keys = map { lc } @{$headers};
@@ -473,7 +473,7 @@ Courriel::Builder - Build emails with sugar
 
 =head1 VERSION
 
-version 0.12
+version 0.13
 
 =head1 SYNOPSIS
 
@@ -571,6 +571,9 @@ The charset for the body. This defaults to UTF-8.
 
 The encoding for the body. This defaults to base64. Other valid values are
 quoted-printable, 7bit, and 8bit.
+
+It is strongly recommended that you let Courriel handle the transfer encoding
+for you.
 
 =back
 
