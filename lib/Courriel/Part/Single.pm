@@ -1,6 +1,6 @@
 package Courriel::Part::Single;
 BEGIN {
-  $Courriel::Part::Single::VERSION = '0.13';
+  $Courriel::Part::Single::VERSION = '0.14';
 }
 
 use strict;
@@ -148,6 +148,8 @@ sub _default_mime_type {
             $self->encoded_content(),
             );
 
+        return $bytes if $self->content_type()->is_binary();
+
         return \(
             decode(
                 $self->content_type()->charset(),
@@ -161,10 +163,11 @@ sub _default_mime_type {
 
         my $encoding = $self->encoding();
 
-        my $bytes = encode(
+        my $bytes
+            = $self->content_type()->is_binary() ? $self->content() : encode(
             $self->content_type()->charset(),
             $self->content(),
-        );
+            );
 
         return \$bytes if $unencoded{ lc $encoding };
 
@@ -207,7 +210,7 @@ Courriel::Part::Single - A part which does not contain other parts, only content
 
 =head1 VERSION
 
-version 0.13
+version 0.14
 
 =head1 SYNOPSIS
 
@@ -286,6 +289,11 @@ This returns returns the encoded content for the part.
 =head2 $part->mime_type()
 
 Returns the mime type for this part.
+
+=head2 $part->has_charset()
+
+Return true if the part has a charset defined. Binary attachments will usually
+not have this defined.
 
 =head2 $part->charset()
 

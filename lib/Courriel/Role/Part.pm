@@ -1,6 +1,6 @@
 package Courriel::Role::Part;
 BEGIN {
-  $Courriel::Role::Part::VERSION = '0.13';
+  $Courriel::Role::Part::VERSION = '0.14';
 }
 
 use strict;
@@ -37,7 +37,7 @@ has content_type => (
     lazy      => 1,
     builder   => '_build_content_type',
     predicate => '_has_content_type',
-    handles   => [qw( mime_type charset )],
+    handles   => [qw( mime_type charset has_charset )],
 );
 
 sub as_string {
