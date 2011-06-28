@@ -1,6 +1,6 @@
 package Courriel::Part::Single;
 BEGIN {
-  $Courriel::Part::Single::VERSION = '0.14';
+  $Courriel::Part::Single::VERSION = '0.15';
 }
 
 use strict;
@@ -148,7 +148,7 @@ sub _default_mime_type {
             $self->encoded_content(),
             );
 
-        return $bytes if $self->content_type()->is_binary();
+        return \$bytes if $self->content_type()->is_binary();
 
         return \(
             decode(
@@ -210,7 +210,7 @@ Courriel::Part::Single - A part which does not contain other parts, only content
 
 =head1 VERSION
 
-version 0.14
+version 0.15
 
 =head1 SYNOPSIS
 
