@@ -1,6 +1,6 @@
 package Courriel::Builder;
 BEGIN {
-  $Courriel::Builder::VERSION = '0.15';
+  $Courriel::Builder::VERSION = '0.16';
 }
 
 use strict;
@@ -473,7 +473,7 @@ Courriel::Builder - Build emails with sugar
 
 =head1 VERSION
 
-version 0.15
+version 0.16
 
 =head1 SYNOPSIS
 

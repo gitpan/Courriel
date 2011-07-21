@@ -32,5 +32,7 @@ t/data/office.jpg
 t/release-cpan-changes.t
 t/release-no-tabs.t
 t/release-pod-coverage.t
+t/release-pod-linkcheck.t
+t/release-pod-no404s.t
 t/release-pod-spell.t
 t/release-pod-syntax.t
