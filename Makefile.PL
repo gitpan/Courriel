@@ -15,7 +15,8 @@ my %WriteMakefileArgs = (
     'File::Slurp' => '0',
     'Test::Differences' => '0',
     'Test::Fatal' => '0',
-    'Test::More' => '0.88'
+    'Test::More' => '0.88',
+    'Test::Requires' => '0'
   },
   'CONFIGURE_REQUIRES' => {
     'ExtUtils::MakeMaker' => '6.30'
@@ -43,7 +44,7 @@ my %WriteMakefileArgs = (
     'Sub::Exporter' => '0',
     'namespace::autoclean' => '0'
   },
-  'VERSION' => '0.16',
+  'VERSION' => '0.17',
   'test' => {
     'TESTS' => 't/*.t'
   }

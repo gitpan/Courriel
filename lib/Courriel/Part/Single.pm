@@ -1,6 +1,6 @@
 package Courriel::Part::Single;
-BEGIN {
-  $Courriel::Part::Single::VERSION = '0.16';
+{
+  $Courriel::Part::Single::VERSION = '0.17';
 }
 
 use strict;
@@ -11,7 +11,7 @@ use Courriel::Helpers qw( parse_header_with_attributes );
 use Courriel::Types qw( NonEmptyStr StringRef );
 use Email::MIME::Encodings;
 use Encode qw( decode encode );
-use MIME::Base64 ();
+use MIME::Base64      ();
 use MIME::QuotedPrint ();
 
 use Moose;
@@ -210,7 +210,7 @@ Courriel::Part::Single - A part which does not contain other parts, only content
 
 =head1 VERSION
 
-version 0.16
+version 0.17
 
 =head1 SYNOPSIS
 

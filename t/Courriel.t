@@ -183,7 +183,8 @@ EOF
 
     my $string = $original;
     $string =~ s/^.+?\n//;    # remove mbox marker line
-    $string =~ s/(\n\nThis is a test email)/\nContent-Transfer-Encoding: 8bit$1/g;
+    $string
+        =~ s/(\n\nThis is a test email)/\nContent-Transfer-Encoding: 8bit$1/g;
     $string =~ s/\n/$crlf/g;
 
     _compare_text(
@@ -504,7 +505,7 @@ EOF
         'email is multipart/mixed'
     );
 
-    my @parts = $email->all_parts_matching( sub { 1 } );
+    my @parts = $email->all_parts_matching( sub {1} );
 
     is(
         scalar @parts, 4,
@@ -519,7 +520,7 @@ EOF
         'after clone type is text/plain'
     );
 
-    @parts = $clone->all_parts_matching( sub { 1 } );
+    @parts = $clone->all_parts_matching( sub {1} );
 
     is(
         scalar @parts, 1,
@@ -552,7 +553,7 @@ EOF
         'email is multipart/mixed'
     );
 
-    my @parts = $email->all_parts_matching( sub { 1 } );
+    my @parts = $email->all_parts_matching( sub {1} );
 
     is(
         scalar @parts, 6,
@@ -567,7 +568,7 @@ EOF
         'after clone type is multipart/alternative'
     );
 
-    @parts = $clone->all_parts_matching( sub { 1 } );
+    @parts = $clone->all_parts_matching( sub {1} );
 
     is(
         scalar @parts, 3,
@@ -599,6 +600,134 @@ EOF
     );
 }
 
+{
+    my $text = <<'EOF';
+From autarch@gmail.com Sun May 29 11:22:29 2011
+MIME-Version: 1.0
+Date: Sun, 29 May 2011 11:22:22 -0500
+Message-ID: <BANLkTimjF2BDbOKO_2jFJsp6t+0KvqxCwQ@mail.gmail.com>
+Subject: Testing
+From: Dave Rolsky <autarch@gmail.com>
+To: Dave Rolsky <autarch@urth.org>
+Content-Type: multipart/alternative; boundary=20cf3071cfd06272ae04a46c9306
+
+
+--20cf3071cfd06272ae04a46c9306
+Content-Type: TEXT/PLAIN; charset=ISO-8859-1
+Content-Disposition: inline
+
+This is a test email.
+
+It has some *bold* text.
+
+--20cf3071cfd06272ae04a46c9306
+Content-Type: tEXT/htML; charset=ISO-8859-1
+Content-Disposition: inline
+
+This is a test email.<br><br>It has some <b>bold</b> text.<br><br>
+
+--20cf3071cfd06272ae04a46c9306--
+EOF
+
+    my $email = Courriel->parse( text => \$text );
+
+    ok(
+        $email->plain_body_part(),
+        'ignored case of mime type when finding plain body part'
+    );
+    ok(
+        $email->html_body_part(),
+        'ignored case of mime type when finding html body part'
+    );
+
+    is(
+        $email->plain_body_part()->content_type()->mime_type(),
+        'text/plain',
+        'ContentType->mime_type method returns all lower case value'
+    );
+
+    is(
+        $email->plain_body_part()->content_type()->as_header_value(),
+        'TEXT/PLAIN; charset=ISO-8859-1',
+        'header value preserves original casing of mime type'
+    );
+}
+
+{
+    my $text = <<'EOF';
+From: Dave Rolsky <autarch@gmail.com>
+MIME-Version: 1.0
+Resent-Date: Sun, 29 May 2011 11:22:23 -0500
+Message-ID: <BANLkTimjF2BDbOKO_2jFJsp6t+0KvqxCwQ@mail.gmail.com>
+Subject: Testing
+To: Dave Rolsky <autarch@urth.org>
+Content-Type: text/plain
+
+foo
+EOF
+
+    my $email = Courriel->parse( text => \$text );
+
+    is(
+        $email->headers()->get('From'),
+        'Dave Rolsky <autarch@gmail.com>',
+        'From header at beginning of mail is not stripped by mbox separator removal',
+    );
+}
+{
+    my $text = <<'EOF';
+From
+  blah blah blah
+MIME-Version: 1.0
+Resent-Date: Sun, 29 May 2011 11:22:23 -0500
+Message-ID: <BANLkTimjF2BDbOKO_2jFJsp6t+0KvqxCwQ@mail.gmail.com>
+Subject: Testing
+From: Dave Rolsky <autarch@gmail.com>
+To: Dave Rolsky <autarch@urth.org>
+Content-Type: text/plain
+
+foo
+EOF
+
+    is(
+        exception {
+            Courriel->parse( text => \$text );
+        },
+        undef,
+        'mbox separator which contains a newline is parser correctly'
+    );
+}
+
+{
+    my $text = <<'EOF';
+From autarch@gmail.com Sun May 29 11:22:29 2011
+MIME-Version: 1.0
+Date: Sun, 29 May 2011 11:22:22 -0500
+Message-ID: <BANLkTimjF2BDbOKO_2jFJsp6t+0KvqxCwQ@mail.gmail.com>
+Subject: Testing
+From: Dave Rolsky <autarch@gmail.com>
+To: Dave Rolsky <autarch@urth.org>
+Content-Type: multipart/alternative; boundary=20cf3071cfd06272ae04a46c9306
+
+WTF, just a single part.
+EOF
+
+    my $email;
+    is(
+        exception {
+            $email = Courriel->parse( text => \$text );
+        },
+        undef,
+        'multipart mime type with single part body still parses'
+    );
+
+    is(
+        $email->part_count(),
+        1,
+        'email has one part'
+    );
+}
+
 done_testing();
 
 sub _compare_text {
@@ -608,7 +737,7 @@ sub _compare_text {
 
     for ( $got, $expect ) {
         s/$Courriel::Helpers::LINE_SEP_RE/$crlf/g;
-        s/$crlf$crlf$crlf+/$crlf$crlf/g ;
+        s/$crlf$crlf$crlf+/$crlf$crlf/g;
     }
 
     local $Test::Builder::Level = $Test::Builder::Level + 1;

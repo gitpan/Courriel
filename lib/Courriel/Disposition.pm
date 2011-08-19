@@ -1,6 +1,6 @@
 package Courriel::Disposition;
-BEGIN {
-  $Courriel::Disposition::VERSION = '0.16';
+{
+  $Courriel::Disposition::VERSION = '0.17';
 }
 
 use strict;
@@ -59,7 +59,8 @@ has filename => (
 
 {
     my $parser = DateTime::Format::Mail->new( loose => 1 );
-    for my $attr (qw( creation_datetime modification_datetime read_datetime )) {
+    for my $attr (qw( creation_datetime modification_datetime read_datetime ))
+    {
         ( my $name_in_header = $attr ) =~ s/_/-/g;
         $name_in_header =~ s/datetime/date/;
 
@@ -111,7 +112,7 @@ Courriel::Disposition - The content disposition for an email part
 
 =head1 VERSION
 
-version 0.16
+version 0.17
 
 =head1 SYNOPSIS
 

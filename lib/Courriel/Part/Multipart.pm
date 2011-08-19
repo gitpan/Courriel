@@ -1,6 +1,6 @@
 package Courriel::Part::Multipart;
-BEGIN {
-  $Courriel::Part::Multipart::VERSION = '0.16';
+{
+  $Courriel::Part::Multipart::VERSION = '0.17';
 }
 
 use strict;
@@ -8,13 +8,13 @@ use warnings;
 use namespace::autoclean;
 
 use Courriel::Helpers qw( unique_boundary );
-use Courriel::Types qw( NonEmptyStr );
+use Courriel::Types qw( ArrayRef NonEmptyStr Part );
 use Email::MessageID;
 
 use Moose;
 use MooseX::StrictConstructor;
 
-with 'Courriel::Role::Part', 'Courriel::Role::HasParts';
+with 'Courriel::Role::Part';
 
 has boundary => (
     is        => 'ro',
@@ -36,6 +36,17 @@ has epilogue => (
     predicate => 'has_epilogue',
 );
 
+has _parts => (
+    traits   => ['Array'],
+    isa      => ArrayRef [Part],
+    init_arg => 'parts',
+    required => 1,
+    handles  => {
+        parts      => 'elements',
+        part_count => 'count',
+    },
+);
+
 sub BUILD {
     my $self = shift;
 
@@ -45,9 +56,12 @@ sub BUILD {
         $self->content_type()->_attributes()->{boundary} = $self->boundary();
     }
     else {
+
         # This is being called to force the builder to run.
         $self->boundary();
     }
+
+    $_->_set_container($self) for $self->parts();
 
     return;
 }
@@ -64,7 +78,7 @@ sub _content_as_string {
     my $self = shift;
 
     my $content;
-    $content .=  $self->preamble() . $Courriel::Helpers::CRLF
+    $content .= $self->preamble() . $Courriel::Helpers::CRLF
         if $self->has_preamble();
 
     $content
@@ -122,7 +136,7 @@ Courriel::Part::Multipart - A part which contains other parts
 
 =head1 VERSION
 
-version 0.16
+version 0.17
 
 =head1 SYNOPSIS
 
@@ -228,8 +242,7 @@ with "\r\n".
 
 =head1 ROLES
 
-This class does the C<Courriel::Role::Part> and C<Courriel::Role::HasParts>
-roles.
+This class does the C<Courriel::Role::Part> role.
 
 =head1 AUTHOR
 

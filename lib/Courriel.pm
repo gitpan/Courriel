@@ -1,6 +1,6 @@
 package Courriel;
-BEGIN {
-  $Courriel::VERSION = '0.16';
+{
+  $Courriel::VERSION = '0.17';
 }
 
 use 5.10.0;
@@ -81,7 +81,7 @@ has _cc => (
 
 has from => (
     is       => 'ro',
-    isa      => Maybe['Email::Address'],
+    isa      => Maybe ['Email::Address'],
     init_arg => undef,
     lazy     => 1,
     builder  => '_build_from',
@@ -237,7 +237,7 @@ sub _build_to {
     my @addresses
         = map { Email::Address->parse($_) } $self->headers()->get('To');
 
-    return $self->_unique_addresses(\@addresses);
+    return $self->_unique_addresses( \@addresses );
 }
 
 sub _build_cc {
@@ -246,7 +246,7 @@ sub _build_cc {
     my @addresses
         = map { Email::Address->parse($_) } $self->headers()->get('CC');
 
-    return $self->_unique_addresses(\@addresses);
+    return $self->_unique_addresses( \@addresses );
 }
 
 sub _build_from {
@@ -262,7 +262,7 @@ sub _build_recipients {
 
     my @addresses = ( $self->to(), $self->cc() );
 
-    return $self->_unique_addresses(\@addresses);
+    return $self->_unique_addresses( \@addresses );
 }
 
 sub _build_participants {
@@ -271,7 +271,7 @@ sub _build_participants {
     my @addresses
         = grep {defined} ( $self->from(), $self->to(), $self->cc() );
 
-    return $self->_unique_addresses(\@addresses);
+    return $self->_unique_addresses( \@addresses );
 }
 
 sub _unique_addresses {
@@ -391,9 +391,12 @@ sub _parse_headers {
     my $sep_idx;
     my $line_sep;
 
-    # We want to ignore mbox message separators
-    ${$text}
-        =~ s/^From .+ \d\d:\d\d:\d\d \d\d\d\d$Courriel::Helpers::LINE_SEP_RE//;
+    # We want to ignore mbox message separators - this is a pretty lax parser,
+    # but we may find broken lines. The key is that it starts with From
+    # followed by space, not a colon.
+    ${$text} =~ s/^From\s+.+$Courriel::Helpers::LINE_SEP_RE//;
+    # Some broken emails may split the From line in an arbitrary spot
+    ${$text} =~ s/^[^:]+$Courriel::Helpers::LINE_SEP_RE//g;
 
     if ( ${$text} =~ /(.+?)($Courriel::Helpers::LINE_SEP_RE)\2/s ) {
         $header_text = $1 . $2;
@@ -401,13 +404,12 @@ sub _parse_headers {
         $line_sep    = $2;
     }
     else {
-        die
-            'The text you passed to parse() does not appear to be a valid email.';
+        return ( q{}, 0, Courriel::Headers::->new() );
     }
 
     # Need to quote class name or else this perl sees this as
     # Courriel::Headers() because of the Headers type constraint.
-    my $headers = 'Courriel::Headers'->parse(
+    my $headers = Courriel::Headers::->parse(
         text     => \$header_text,
         line_sep => $line_sep,
     );
@@ -442,10 +444,16 @@ sub _parse_parts {
                 (.*)                    # epilogue
                 /smx;
 
-    my @part_text = split /^--\Q$boundary\E\s*/m, $all_parts;
+    my @part_text;
 
-    die 'Could not parse any parts from a supposedly multipart message.'
-        unless @part_text;
+    if ( defined $all_parts ) {
+        @part_text = split /^--\Q$boundary\E\s*/m, $all_parts;
+    }
+
+    unless (@part_text) {
+        ${$text} =~ s/^--\Q$boundary\E\s*//m;
+        push @part_text, ${$text};
+    }
 
     return Courriel::Part::Multipart->new(
         headers => $headers,
@@ -494,7 +502,7 @@ Courriel - High level email parsing and manipulation
 
 =head1 VERSION
 
-version 0.16
+version 0.17
 
 =head1 SYNOPSIS
 

@@ -1,6 +1,6 @@
 package Courriel::Role::Part;
-BEGIN {
-  $Courriel::Role::Part::VERSION = '0.16';
+{
+  $Courriel::Role::Part::VERSION = '0.17';
 }
 
 use strict;
@@ -27,7 +27,7 @@ has headers => (
 has container => (
     is       => 'rw',
     writer   => '_set_container',
-    does     => 'Courriel::Role::HasParts',
+    isa      => 'Courriel::Part::Multipart',
     weak_ref => 1,
 );
 

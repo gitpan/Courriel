@@ -1,6 +1,6 @@
 package Courriel::Headers;
-BEGIN {
-  $Courriel::Headers::VERSION = '0.16';
+{
+  $Courriel::Headers::VERSION = '0.17';
 }
 
 use strict;
@@ -8,7 +8,8 @@ use warnings;
 use namespace::autoclean;
 
 use Courriel::Helpers qw( fold_header );
-use Courriel::Types qw( ArrayRef Defined EvenArrayRef HashRef NonEmptyStr Str StringRef );
+use Courriel::Types
+    qw( ArrayRef Defined EvenArrayRef HashRef NonEmptyStr Str StringRef );
 use Encode qw( decode encode find_encoding );
 use MIME::Base64 qw( decode_base64 encode_base64 );
 use MIME::QuotedPrint qw( decode_qp );
@@ -16,8 +17,6 @@ use MooseX::Params::Validate qw( pos_validated_list validated_list );
 
 use Moose;
 use MooseX::StrictConstructor;
-
-with 'Courriel::Role::Headers';
 
 has _headers => (
     traits   => ['Array'],
@@ -189,16 +188,16 @@ sub _key_indices_for {
 
 {
     my $horiz_ws = qr/[ \t]/;
-    my $line_re = qr/
-                     (?:
-                         ([^\s:][^:\n\r]*)  # a header name
-                         :                  # followed by a colon
-                         $horiz_ws*
-                         (.*)               # header value - can be empty
-                     )
-                     |
-                     $horiz_ws+(\S.*)       # continuation line
-                    /x;
+    my $line_re  = qr/
+                      (?:
+                          ([^\s:][^:\n\r]*)  # a header name
+                          :                  # followed by a colon
+                          $horiz_ws*
+                          (.*)               # header value - can be empty
+                      )
+                      |
+                      $horiz_ws+(\S.*)?      # continuation line
+                     /x;
 
     my @spec = (
         text => { isa => StringRef, coerce => 1 },
@@ -217,6 +216,8 @@ sub _key_indices_for {
 
         my $sep_re = qr/\Q$sep/;
 
+        $class->_maybe_fix_broken_headers( $text, $sep_re );
+
         while ( ${$text} =~ /\G${line_re}${sep_re}/gc ) {
             if ( defined $1 ) {
                 push @headers, $1, $2;
@@ -227,13 +228,14 @@ sub _key_indices_for {
                     unless @headers;
 
                 $headers[-1] //= q{};
+
                 # Looking at RFC 5322 it really seems like the whitespace on
                 # the continuation line should be part of the header value,
                 # but looking at emails in real use suggests that all the
                 # leading whitespace should be compressed down to a single
                 # space, so that's what we do.
                 $headers[-1] .= q{ } if length $headers[-1];
-                $headers[-1] .= $3;
+                $headers[-1] .= $3 if defined $3;
             }
         }
 
@@ -242,7 +244,11 @@ sub _key_indices_for {
             my @lines = split $sep_re, substr( ${$text}, 0, $pos );
             my $count = ( scalar @lines ) + 1;
 
-            die "Found an unparseable chunk in the header text starting at line $count.";
+            my $line = ( split $sep_re, ${$text} )[ $count - 1 ];
+
+            die defined $line
+                ? "Found an unparseable chunk in the header text starting at line $count:\n  $line"
+                : 'Could not parse headers at all';
         }
 
         for ( my $i = 1; $i < @headers; $i += 2 ) {
@@ -251,6 +257,19 @@ sub _key_indices_for {
 
         return $class->new( headers => \@headers );
     }
+}
+
+sub _maybe_fix_broken_headers {
+    my $class  = shift;
+    my $text   = shift;
+    my $sep_re = shift;
+
+    # Some broken email messages have a newline int he headers that isn't
+    # acting as a continuation, it's just an arbitrary line break. See
+    # t/data/stress-test/mbox_mime_applemail_1xb.txt
+    ${$text} =~ s/$sep_re([^\s:][^:]+$sep_re)/$1/g;
+
+    return;
 }
 
 {
@@ -413,7 +432,7 @@ Courriel::Headers - The headers for an email part
 
 =head1 VERSION
 
-version 0.16
+version 0.17
 
 =head1 SYNOPSIS
 

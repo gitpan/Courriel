@@ -7,10 +7,11 @@ build_requires:
   Test::Differences: 0
   Test::Fatal: 0
   Test::More: 0.88
+  Test::Requires: 0
 configure_requires:
   ExtUtils::MakeMaker: 6.30
 dynamic_config: 0
-generated_by: 'Dist::Zilla version 4.200012, CPAN::Meta::Converter version 2.110930'
+generated_by: 'Dist::Zilla version 4.200013, CPAN::Meta::Converter version 2.110930'
 license: artistic_2
 meta-spec:
   url: http://module-build.sourceforge.net/META-spec-v1.4.html
@@ -38,4 +39,4 @@ requires:
 resources:
   bugtracker: http://rt.cpan.org/NoAuth/Bugs.html?Dist=Courriel
   repository: git://git.urth.org/Courriel.git
-version: 0.16
+version: 0.17

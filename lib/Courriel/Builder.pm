@@ -1,6 +1,6 @@
 package Courriel::Builder;
-BEGIN {
-  $Courriel::Builder::VERSION = '0.16';
+{
+  $Courriel::Builder::VERSION = '0.17';
 }
 
 use strict;
@@ -136,11 +136,13 @@ sub _bad_value {
 sub _add_required_headers {
     my $headers = shift;
 
-    my %keys = map { lc } @{$headers};
+    my %keys = map {lc} @{$headers};
 
     unless ( $keys{date} ) {
         push @{$headers},
-            ( Date => DateTime::Format::Mail->format_datetime( DateTime->now() ) );
+            (
+            Date => DateTime::Format::Mail->format_datetime( DateTime->now() )
+            );
     }
 
     unless ( $keys{'message-id'} ) {
@@ -473,7 +475,7 @@ Courriel::Builder - Build emails with sugar
 
 =head1 VERSION
 
-version 0.16
+version 0.17
 
 =head1 SYNOPSIS
 
