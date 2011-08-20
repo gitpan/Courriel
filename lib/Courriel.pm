@@ -1,6 +1,6 @@
 package Courriel;
 {
-  $Courriel::VERSION = '0.17';
+  $Courriel::VERSION = '0.18';
 }
 
 use 5.10.0;
@@ -18,6 +18,7 @@ use Courriel::Types
     qw( ArrayRef Bool Headers Maybe NonEmptyStr Part StringRef );
 use DateTime;
 use DateTime::Format::Mail;
+use DateTime::Format::Natural;
 use Email::Address;
 use List::AllUtils qw( uniq );
 use MooseX::Params::Validate qw( validated_list );
@@ -194,41 +195,51 @@ sub _build_subject {
 }
 
 {
-    my $parser = DateTime::Format::Mail->new( loose => 1 );
+    my $mail_parser = DateTime::Format::Mail->new( loose => 1 );
+    my $natural_parser = DateTime::Format::Natural->new( time_zone => 'UTC' );
 
     sub _build_datetime {
         my $self = shift;
 
-        # Stolen from Email::Date
-        my $raw_date 
-            = $self->headers()->get('Date')
-            || $self->_find_date_received( $self->headers()->get('Received') )
-            || $self->headers()->get('Resent-Date');
+        my @possible = (
+            $self->headers()->get('Date'),
+            (
+                reverse
+                    map { $self->_find_date_received($_) }
+                    $self->headers()->get('Received')
+            ),
+            $self->headers()->get('Resent-Date')
+        );
 
-        if ( defined $raw_date && length $raw_date ) {
-            my $dt = eval { $parser->parse_datetime($raw_date) };
+        # Stolen from Email::Date and then modified
+        for my $possible (@possible) {
+            next unless defined $possible && length $possible;
 
-            if ($dt) {
-                $dt->set_time_zone('UTC');
-                return $dt;
+            my $dt = eval { $mail_parser->parse_datetime($possible) };
+
+            unless ($dt) {
+                $dt = $natural_parser->parse_datetime($possible);
+                next unless $natural_parser->success();
             }
+
+            $dt->set_time_zone('UTC');
+            return $dt;
         }
 
         return DateTime->now( time_zone => 'UTC' );
     }
 }
 
-# Stolen from Email::Date
+# Stolen from Email::Date and modified
 sub _find_date_received {
     shift;
+    my $received = shift;
 
-    return unless defined $_[0] and length $_[0];
+    return unless defined $received && length $received;
 
-    my $most_recent = pop;
+    $received =~ s/.+;//;
 
-    $most_recent =~ s/.+;//;
-
-    return $most_recent;
+    return $received;
 }
 
 sub _build_to {
@@ -502,7 +513,7 @@ Courriel - High level email parsing and manipulation
 
 =head1 VERSION
 
-version 0.17
+version 0.18
 
 =head1 SYNOPSIS
 
@@ -570,13 +581,14 @@ Returns a L<DateTime> object for the email. The DateTime object is always in
 the "UTC" time zone.
 
 This uses the Date header by default one. Otherwise it looks at the date in
-the first Received header, and then it looks for a Resent-Date header. If none
-of these exists, it just returns C<< DateTime->now() >>.
+each Received header, and then it looks for a Resent-Date header. If none of
+these exists, it just returns C<< DateTime->now() >>.
 
 =head2 $email->from()
 
 This returns a single L<Email::Address> object based on the From header of the
-email. If the email has no From header, it returns C<undef>.
+email. If the email has no From header or if the From header is broken, it
+returns C<undef>.
 
 =head2 $email->participants()
 
@@ -584,20 +596,28 @@ This returns a list of L<Email::Address> objects, one for each unique
 participant in the email. This includes any address in the From, To, or CC
 headers.
 
+Just like with the From header, broken addresses will not be included.
+
 =head2 $email->recipients()
 
 This returns a list of L<Email::Address> objects, one for each unique
 recipient in the email. This includes any address in the To or CC headers.
+
+Just like with the From header, broken addresses will not be included.
 
 =head2 $email->to()
 
 This returns a list of L<Email::Address> objects, one for each unique
 address in the To header.
 
+Just like with the From header, broken addresses will not be included.
+
 =head2 $email->cc()
 
 This returns a list of L<Email::Address> objects, one for each unique
 address in the CC header.
+
+Just like with the From header, broken addresses will not be included.
 
 =head2 $email->plain_body_part()
 

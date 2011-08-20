@@ -1,3 +1,16 @@
+0.18     2011-08-20
+
+- More improvements in handling broken email based on jwang's corpus of broken
+  messages.
+
+- Courriel tries a lot harder to find a date for the email. It now looks at
+  all the Received headers, and it also uses DateTime::Format::Natural to
+  parse dates if DateTime::Format::Mail fails.
+
+- Courriel handles the charset "unknown-8bit" (by ignoring it and treating it
+  as ASCII).
+
+
 0.17     2011-08-19
 
 - Email parsing is now much more flexible, and throws fewer

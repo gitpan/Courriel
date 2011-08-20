@@ -36,7 +36,6 @@ t/data/stress-test/mbox_delivered_to.txt
 t/data/stress-test/mbox_excessive-bounces.txt
 t/data/stress-test/mbox_gmane_entities.txt
 t/data/stress-test/mbox_headers_many.txt
-t/data/stress-test/mbox_local_double.txt
 t/data/stress-test/mbox_local_from.txt
 t/data/stress-test/mbox_mime_applemail_1x.txt
 t/data/stress-test/mbox_mime_applemail_1xb.txt
@@ -95,3 +94,4 @@ t/release-pod-no404s.t
 t/release-pod-spell.t
 t/release-pod-syntax.t
 t/stress.t
+t/weird-input.t
