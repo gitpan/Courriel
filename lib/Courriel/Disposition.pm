@@ -1,6 +1,6 @@
 package Courriel::Disposition;
 {
-  $Courriel::Disposition::VERSION = '0.18';
+  $Courriel::Disposition::VERSION = '0.19';
 }
 
 use strict;
@@ -68,7 +68,10 @@ has filename => (
             my $val = $_[0]->_attributes()->{$name_in_header};
             return unless $val;
 
-            return $parser->parse_datetime($val);
+            my $dt = $parser->parse_datetime($val);
+            $dt->set_time_zone('UTC') if $dt;
+
+            return $dt;
         };
 
         has $attr => (
@@ -112,7 +115,7 @@ Courriel::Disposition - The content disposition for an email part
 
 =head1 VERSION
 
-version 0.18
+version 0.19
 
 =head1 SYNOPSIS
 
