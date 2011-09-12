@@ -1,6 +1,6 @@
 package Courriel::Helpers;
 {
-  $Courriel::Helpers::VERSION = '0.20'; # TRIAL
+  $Courriel::Helpers::VERSION = '0.21'; # TRIAL
 }
 
 use strict;
@@ -91,7 +91,7 @@ my $extract_quoted = qr/
                            )
                        /x;
 
-# This is a very loose regex. RFC2231 has a much tighter definition of what
+# This is a very loose regex. RFC 2231 has a much tighter definition of what
 # can go in an attribute name, but this parser is designed to accept all the
 # crap the internet throws at it.
 my $attr_re = qr/
@@ -163,7 +163,7 @@ sub _decode_raw_value {
     my $raw     = shift;
     my $charset = shift;
 
-    $raw =~ s/%([\da-fA_F]{2})/chr(hex($1))/eg;
+    $raw =~ s/%([\da-fA-F]{2})/chr(hex($1))/eg;
 
     return $raw unless defined $charset;
 

@@ -9,6 +9,10 @@ use Courriel::Headers;
 use Courriel::Helpers;
 use Scalar::Util qw( blessed );
 
+binmode $_, ':utf8'
+    for map { Test::Builder->new()->$_() }
+    qw( output failure_output todo_output );
+
 my $crlf = $Courriel::Helpers::CRLF;
 
 my $hola = "\x{00A1}Hola, se\x{00F1}or!";
@@ -33,6 +37,18 @@ my $hola = "\x{00A1}Hola, se\x{00F1}or!";
         [ map { $_->value() } $h->get('subject') ],
         ['Foo bar'],
         'got subject header (name is case-insensitive)'
+    );
+
+    is_deeply(
+        [ $h->get_values('subject') ],
+        ['Foo bar'],
+        'got subject header with get_values method'
+    );
+
+    is_deeply(
+        [ $h->get_values('no-such-header') ],
+        [],
+        'get_values returns empty list for nonexistent header'
     );
 
     $h->add( 'Content-Type' => 'text/plain' );
@@ -261,6 +277,27 @@ EOF
     );
 }
 
+{
+    my ( undef, $attrs )
+        = Courriel::Helpers::parse_header_with_attributes(
+        q{text/plain; name*=utf-8''Iv%C3%A1n%20F.txt});
+
+    my $attr = $attrs->{name};
+
+    is_deeply(
+        [
+            $attr->value(),
+            $attr->charset(),
+            $attr->language(),
+        ],
+        [
+            "Iv\x{00E1}n F.txt",
+            'UTF-8',
+            undef,
+        ],
+        'parsed encoded European attribute correctly, with no language'
+    );
+}
 
 {
     my $extended = <<'EOF';

@@ -6,8 +6,6 @@ META.json
 META.yml
 Makefile.PL
 README
-_trial_temp/_trial_marker
-_trial_temp/test.log
 benchmarks/vs-email-mime
 dist.ini
 lib/Courriel.pm

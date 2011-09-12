@@ -1,6 +1,6 @@
 package Courriel::Header::Disposition;
 {
-  $Courriel::Header::Disposition::VERSION = '0.20'; # TRIAL
+  $Courriel::Header::Disposition::VERSION = '0.21'; # TRIAL
 }
 
 use strict;
@@ -113,7 +113,7 @@ Courriel::Header::Disposition - The content disposition for an email part
 
 =head1 VERSION
 
-version 0.20
+version 0.21
 
 =head1 SYNOPSIS
 
@@ -223,10 +223,15 @@ Returns a hash (not a reference) of the attributes passed to the constructor.
 
 Attributes are L<Courriel::HeaderAttribute> objects.
 
-=head2 $disp->get_attribute($key)
+=head2 $disp->attribute($key)
 
-Given a key, returns the value of the named attribute. Obviously, this value
-can be C<undef> if the attribute doesn't exist.
+Given a key, returns the named L<Courriel::HeaderAttribute>
+object. Obviously, this value can be C<undef> if the attribute doesn't exist.
+
+=head2 $disp->attribute_value($key)
+
+Given a key, returns the named attribute's value as a string. Obviously, this
+value can be C<undef> if the attribute doesn't exist.
 
 The attribute is a L<Courriel::HeaderAttribute> object.
 

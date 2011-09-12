@@ -1,6 +1,6 @@
 package Courriel::Headers;
 {
-  $Courriel::Headers::VERSION = '0.20'; # TRIAL
+  $Courriel::Headers::VERSION = '0.21'; # TRIAL
 }
 
 use strict;
@@ -135,6 +135,22 @@ sub _build_key_indices {
         );
 
         return @{ $self->_headers() }[ $self->_key_indices_for($name) ];
+    }
+}
+
+{
+    my @spec = ( { isa => NonEmptyStr } );
+
+    sub get_values {
+        my $self = shift;
+        my ($name) = pos_validated_list(
+            \@_,
+            @spec,
+        );
+
+        return
+            map { $_->value() }
+            @{ $self->_headers() }[ $self->_key_indices_for($name) ];
     }
 }
 
@@ -501,7 +517,7 @@ Courriel::Headers - The headers for an email part
 
 =head1 VERSION
 
-version 0.20
+version 0.21
 
 =head1 SYNOPSIS
 
@@ -517,6 +533,22 @@ This class represents the headers of an email.
 Any sub part of an email can have its own headers, so every part has an
 associated object representing its headers. This class makes no distinction
 between top-level headers and headers for a sub part.
+
+Each individual header name/value pair is represented internally by a
+L<Courriel::Header> object. Some headers have their own special
+subclass. These are:
+
+=over 4
+
+=item * Content-Type
+
+This is stored as a L<Courriel::Header::ContentType> object.
+
+=item * Content-Disposition
+
+This is stored as a L<Courriel::Header::Disposition> object.
+
+=back
 
 =head1 API
 
@@ -542,8 +574,9 @@ output with RFC-compliant line endings.
 
 =back
 
-Header parsing unfolds folded headers, and decodes any MIME-encoded values (as
-described in RFC 2047).
+Header parsing unfolds folded headers, and decodes any MIME-encoded values as
+described in RFC 2047. Parsing also decodes header attributes encoded as
+described in RFC 2231.
 
 =head2 Courriel::Headers->new( headers => [ ... ] )
 
@@ -559,8 +592,14 @@ Header order is preserved, per RFC 5322.
 
 =head2 $headers->get($name)
 
-Given a header name, this returns a list of the values found for the
-header. Each occurrence of the header is returned as a separate value.
+Given a header name, this returns a list of the L<Courriel::Header> objects
+found for the header. Each occurrence of the header is returned as a separate
+object.
+
+=head2 $headers->get_values($name)
+
+Given a header name, this returns a list of the string values found for the
+header. Each occurrence of the header is returned as a separate string.
 
 =head2 $headers->add( $name => $value )
 
@@ -568,11 +607,15 @@ Given a header name and value, this adds the headers to the object. If any of
 the headers already have values in the object, then new values are added after
 the existing values, rather than at the end of headers.
 
+The value can be provided as a string or a L<Courriel::Header> object.
+
 =head2 $headers->unshift( $name => $value )
 
 This is like C<add()>, but this pushes the headers onto the front of the
 internal headers array. This is useful if you are adding "Received" headers,
 which per RFC 5322, should always be added at the I<top> of the headers.
+
+The value can be provided as a string or a L<Courriel::Header> object.
 
 =head2 $headers->remove($name)
 
@@ -581,6 +624,8 @@ Given a header name, this removes all instances of that header from the object.
 =head2 $headers->replace( $name => $value )
 
 A shortcut for calling C<remove()> and C<add()>.
+
+The value can be provided as a string or a L<Courriel::Header> object.
 
 =head2 $headers->as_string( charset => ... )
 

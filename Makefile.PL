@@ -46,7 +46,7 @@ my %WriteMakefileArgs = (
     "Sub::Exporter" => 0,
     "namespace::autoclean" => 0
   },
-  "VERSION" => "0.20",
+  "VERSION" => "0.21",
   "test" => {
     "TESTS" => "t/*.t"
   }
