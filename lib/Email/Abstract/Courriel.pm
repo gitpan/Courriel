@@ -1,6 +1,6 @@
 package Email::Abstract::Courriel;
 {
-  $Email::Abstract::Courriel::VERSION = '0.19';
+  $Email::Abstract::Courriel::VERSION = '0.20'; # TRIAL
 }
 
 use strict;
@@ -19,7 +19,7 @@ sub construct {
 
 sub get_header {
     my ( $class, $obj, $header ) = @_;
-    my @values = $obj->headers()->get($header);
+    my @values = map { $_->value() } $obj->headers()->get($header);
     return wantarray ? @values : $values[0];
 }
 
@@ -58,7 +58,7 @@ Email::Abstract::Courriel - Email::Abstract wrapper for Courriel
 
 =head1 VERSION
 
-version 0.19
+version 0.20
 
 =head1 DESCRIPTION
 

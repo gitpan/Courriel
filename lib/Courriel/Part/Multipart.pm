@@ -1,12 +1,13 @@
 package Courriel::Part::Multipart;
 {
-  $Courriel::Part::Multipart::VERSION = '0.19';
+  $Courriel::Part::Multipart::VERSION = '0.20'; # TRIAL
 }
 
 use strict;
 use warnings;
 use namespace::autoclean;
 
+use Courriel::HeaderAttribute;
 use Courriel::Helpers qw( unique_boundary );
 use Courriel::Types qw( ArrayRef NonEmptyStr Part );
 use Email::MessageID;
@@ -53,7 +54,11 @@ sub BUILD {
     # XXX - this is a nasty hack but I'm not sure if it can better. We want
     # the boundary in the ContentType object to match the one in this part.
     if ( $self->_has_boundary() ) {
-        $self->content_type()->_attributes()->{boundary} = $self->boundary();
+        $self->content_type()->_attributes()->{boundary}
+            = Courriel::HeaderAttribute->new(
+            name  => 'boundary',
+            value => $self->boundary(),
+            );
     }
     else {
 
@@ -104,7 +109,12 @@ sub _build_boundary {
 
     my $attr = $self->content_type()->_attributes();
 
-    return $attr->{boundary} //= unique_boundary();
+    $attr->{boundary} //= Courriel::HeaderAttribute->new(
+        name  => 'boundary',
+        value => unique_boundary(),
+    );
+
+    return $attr->{boundary}->value();
 }
 
 around _build_content_type => sub {
@@ -136,7 +146,7 @@ Courriel::Part::Multipart - A part which contains other parts
 
 =head1 VERSION
 
-version 0.19
+version 0.20
 
 =head1 SYNOPSIS
 
@@ -166,7 +176,7 @@ required, but could be empty.
 
 =item * content_type
 
-A L<Courriel::ContentType> object. This defaults to one with a mime type of
+A L<Courriel::Header::ContentType> object. This defaults to one with a mime type of
 "multipart/mixed".
 
 =item * boundary
@@ -207,7 +217,7 @@ Returns the mime type for this part.
 
 =head2 $part->content_type()
 
-Returns the L<Courriel::ContentType> object for this part.
+Returns the L<Courriel::Header::ContentType> object for this part.
 
 =head2 $part->headers()
 

@@ -37,6 +37,7 @@
             "MooseX::StrictConstructor" : 0,
             "MooseX::Types" : 0,
             "MooseX::Types::Common::String" : 0,
+            "Scalar::Util" : 0,
             "Sub::Exporter" : 0,
             "namespace::autoclean" : 0,
             "perl" : "v5.10.0"
@@ -52,7 +53,7 @@
          }
       }
    },
-   "release_status" : "stable",
+   "release_status" : "testing",
    "resources" : {
       "bugtracker" : {
          "mailto" : "bug-courriel@rt.cpan.org",
@@ -64,6 +65,6 @@
          "web" : "http://git.urth.org/Courriel.git"
       }
    },
-   "version" : "0.19"
+   "version" : "0.20"
 }
 

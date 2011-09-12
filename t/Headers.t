@@ -7,6 +7,7 @@ use Test::More 0.88;
 
 use Courriel::Headers;
 use Courriel::Helpers;
+use Scalar::Util qw( blessed );
 
 my $crlf = $Courriel::Helpers::CRLF;
 
@@ -15,7 +16,7 @@ my $hola = "\x{00A1}Hola, se\x{00F1}or!";
 {
     my $h = Courriel::Headers->new();
     is_deeply(
-        [ $h->headers() ],
+        _headers_as_arrayref($h),
         [],
         'can make an empty headers object'
     );
@@ -23,13 +24,13 @@ my $hola = "\x{00A1}Hola, se\x{00F1}or!";
     $h->add( Subject => 'Foo bar' );
 
     is_deeply(
-        [ $h->headers() ],
+        _headers_as_arrayref($h),
         [ Subject => 'Foo bar' ],
         'added Subject header'
     );
 
     is_deeply(
-        [ $h->get('subject') ],
+        [ map { $_->value() } $h->get('subject') ],
         ['Foo bar'],
         'got subject header (name is case-insensitive)'
     );
@@ -37,7 +38,7 @@ my $hola = "\x{00A1}Hola, se\x{00F1}or!";
     $h->add( 'Content-Type' => 'text/plain' );
 
     is_deeply(
-        [ $h->headers() ],
+        _headers_as_arrayref($h),
         [
             Subject        => 'Foo bar',
             'Content-Type' => 'text/plain',
@@ -48,7 +49,7 @@ my $hola = "\x{00A1}Hola, se\x{00F1}or!";
     $h->add( 'Subject' => 'Part 2' );
 
     is_deeply(
-        [ $h->headers() ],
+        _headers_as_arrayref($h),
         [
             Subject        => 'Foo bar',
             Subject        => 'Part 2',
@@ -58,7 +59,7 @@ my $hola = "\x{00A1}Hola, se\x{00F1}or!";
     );
 
     is_deeply(
-        [ $h->get('subject') ],
+        [ map { $_->value() } $h->get('subject') ],
         [ 'Foo bar', 'Part 2' ],
         'got all subject headers'
     );
@@ -80,7 +81,7 @@ EOF
     $h->remove('Subject');
 
     is_deeply(
-        [ $h->headers() ],
+        _headers_as_arrayref($h),
         [
             'Content-Type' => 'text/plain',
         ],
@@ -112,7 +113,7 @@ EOF
     my $h = Courriel::Headers->parse( text => \$headers, line_sep => $crlf );
 
     is_deeply(
-        [ $h->headers() ],
+        _headers_as_arrayref($h),
         [
             Foo => 1,
             Bar => 2,
@@ -125,16 +126,208 @@ EOF
 {
     my ( $val, $attrs )
         = Courriel::Helpers::parse_header_with_attributes(
+        q{foo/bar; test1=simple; test2="quoted string"}
+        );
+
+    is( $val, 'foo/bar', 'got correct value for header with attributes' );
+    is_deeply(
+        _attributes_as_hashref($attrs),
+        {
+            test1 => 'simple',
+            test2 => 'quoted string',
+        },
+        'parsed attributes with simple values correctly'
+    );
+}
+
+{
+    my ( $val, $attrs )
+        = Courriel::Helpers::parse_header_with_attributes(
+        q{foo/bar; test1='single'; test2="double"}
+        );
+
+    is( $val, 'foo/bar', 'got correct value for header with attributes' );
+    is_deeply(
+        _attributes_as_hashref($attrs),
+        {
+            test1 => 'single',
+            test2 => 'double',
+        },
+        'parsed attributes with simple values correctly'
+    );
+}
+
+{
+    my ( $val, $attrs )
+        = Courriel::Helpers::parse_header_with_attributes(
         q{foo/bar; test1="has \\"escaped \\vals"; test2="contains ' single \\quote"}
         );
 
     is( $val, 'foo/bar', 'got correct value for header with attributes' );
     is_deeply(
-        $attrs, {
+        _attributes_as_hashref($attrs),
+        {
             test1 => q{has "escaped vals},
             test2 => q{contains ' single quote},
         },
         'parsed attributes with weird values correctly'
+    );
+}
+
+{
+    my ( undef, $attrs )
+        = Courriel::Helpers::parse_header_with_attributes(
+        q{foo/bar; val*0=foo; val*1=bar});
+
+    is_deeply(
+        _attributes_as_hashref($attrs),
+        {
+            val => 'foobar',
+        },
+        'parsed attribute continuation correctly'
+    );
+}
+
+{
+    my ( undef, $attrs )
+        = Courriel::Helpers::parse_header_with_attributes(
+        q{foo/bar; val*0="foo bar"; val*1=" baz buz"});
+
+    is_deeply(
+        _attributes_as_hashref($attrs),
+        {
+            val => 'foo bar baz buz',
+        },
+        'parsed quoted attribute continuation correctly'
+    );
+}
+
+{
+    my ( undef, $attrs )
+        = Courriel::Helpers::parse_header_with_attributes(
+        q{foo/bar; val*0=foo; val*1=" bar"});
+
+    is_deeply(
+        _attributes_as_hashref($attrs),
+        {
+            val => 'foo bar',
+        },
+        'parsed partially quoted attribute continuation correctly'
+    );
+}
+
+{
+    my ( undef, $attrs )
+        = Courriel::Helpers::parse_header_with_attributes(
+        q{foo/bar; val*=UTF-8'en-gb'Some%20text%20with%20encoding});
+
+    my $attr = $attrs->{val};
+
+    is_deeply(
+        [
+            $attr->value(),
+            $attr->charset(),
+            $attr->language(),
+        ],
+        [
+            'Some text with encoding',
+            'UTF-8',
+            'en-gb',
+        ],
+        'parsed encoded attribute correctly'
+    );
+}
+
+
+{
+    my ( undef, $attrs )
+        = Courriel::Helpers::parse_header_with_attributes(
+        q{foo/bar; val*=UTF-8''%e4%b8%80%e4%b8%80});
+
+    my $attr = $attrs->{val};
+
+    is_deeply(
+        [
+            $attr->value(),
+            $attr->charset(),
+            $attr->language(),
+        ],
+        [
+            "\x{4E00}\x{4E00}",
+            'UTF-8',
+            undef,
+        ],
+        'parsed encoded chinese attribute correctly, with no language'
+    );
+}
+
+
+{
+    my $extended = <<'EOF';
+foo/bar;
+  val*0*=UTF-8'en-gb'Some%20text%20with%20encoding;
+  val*1=" but now it's quoted and then ";
+  val*2=simple;
+  val*3*=%20then%20hex%20simple;
+EOF
+
+    my ( undef, $attrs )
+        = Courriel::Helpers::parse_header_with_attributes($extended);
+
+    my $attr = $attrs->{val};
+
+    is_deeply(
+        [
+            $attr->value(),
+            $attr->charset(),
+            $attr->language(),
+        ],
+        [
+            q{Some text with encoding but now it's quoted and then simple then hex simple},
+            'UTF-8',
+            'en-gb',
+        ],
+        'parsed encoded attribute with continuations correctly'
+    );
+}
+
+{
+    my ( $value, $attrs );
+
+    is(
+        exception {
+            ( $value, $attrs )
+                = Courriel::Helpers::parse_header_with_attributes(
+                q{foo/bar;});
+        },
+        undef,
+        'no exception for trailing semi-colon on header that can have attributes'
+    );
+
+    is_deeply(
+        [ $value, $attrs ],
+        [ 'foo/bar', {} ],
+        'handled trailing semi-colon correctly (parsed as having no attributes'
+    );
+}
+
+{
+    my ( $value, $attrs );
+
+    is(
+        exception {
+            ( $value, $attrs )
+                = Courriel::Helpers::parse_header_with_attributes(
+                q{foo/bar; bad});
+        },
+        undef,
+        'no exception for bad attribute syntax'
+    );
+
+    is_deeply(
+        [ $value, $attrs ],
+        [ 'foo/bar', {} ],
+        'handled bad attribute syntax correctly'
     );
 }
 
@@ -151,7 +344,7 @@ EOF
     my $h = Courriel::Headers->parse( text => \$headers, line_sep => $crlf );
 
     is_deeply(
-        [ $h->headers() ],
+        _headers_as_arrayref($h),
         [
             Foo => 1,
             Bar => 2,
@@ -188,7 +381,7 @@ EOF
     my $h = Courriel::Headers->parse( text => \$headers, line_sep => $crlf );
 
     is_deeply(
-        [ $h->headers() ],
+        _headers_as_arrayref($h),
         [
             Foo => 'hello world',
             Bar => 2,
@@ -208,7 +401,7 @@ EOF
     my $h = Courriel::Headers->parse( text => \$headers, line_sep => "\n" );
 
     is_deeply(
-        [ $h->headers() ],
+        _headers_as_arrayref($h),
         [
             Subject => $hola,
             Bar     => 2,
@@ -240,7 +433,7 @@ EOF
     my $h = Courriel::Headers->parse( text => \$headers, line_sep => "\n" );
 
     is_deeply(
-        [ $h->headers() ],
+        _headers_as_arrayref($h),
         [
             Subject => $hola . $hola,
         ],
@@ -256,7 +449,7 @@ EOF
     my $h = Courriel::Headers->parse( text => \$headers, line_sep => "\n" );
 
     is_deeply(
-        [ $h->headers() ],
+        _headers_as_arrayref($h),
         [
             Subject => $hola . ' not encoded'
         ],
@@ -272,7 +465,7 @@ EOF
     my $h = Courriel::Headers->parse( text => \$headers, line_sep => "\n" );
 
     is_deeply(
-        [ $h->headers() ],
+        _headers_as_arrayref($h),
         [
             Subject => $hola . '   not encoded'
         ],
@@ -288,7 +481,7 @@ EOF
     my $h = Courriel::Headers->parse( text => \$headers, line_sep => "\n" );
 
     is_deeply(
-        [ $h->headers() ],
+        _headers_as_arrayref($h),
         [
             Subject => 'not encoded ' . $hola
         ],
@@ -304,7 +497,7 @@ EOF
     my $h = Courriel::Headers->parse( text => \$headers, line_sep => "\n" );
 
     is_deeply(
-        [ $h->headers() ],
+        _headers_as_arrayref($h),
         [
             Subject => 'not encoded   ' . $hola
         ],
@@ -337,7 +530,9 @@ EOF
     );
 
     is_deeply(
-        [ Courriel::Headers->parse( text => $h->as_string() )->headers() ],
+        _headers_as_arrayref(
+            Courriel::Headers->parse( text => $h->as_string() )
+        ),
         [ Subject => $chinese ],
         'Chinese subject header round trips properly'
     );
@@ -395,26 +590,29 @@ EOF
 
     my $h = Courriel::Headers->parse( text => \$real, line_sep => $crlf );
 
-    is(
-        $h->get('Precedence'), 'normal',
+    is_deeply(
+        [ map { $_->value() } $h->get('Precedence') ],
+        ['normal'],
         'Precendence header was parsed properly'
     );
 
-    is(
-        $h->get('Message-ID'),
-        '<rt-3.8.HEAD-18810-1306605243-528.68527-4-0@rt.cpan.org>',
+    is_deeply(
+        [ map { $_->value() } $h->get('Message-ID') ],
+        ['<rt-3.8.HEAD-18810-1306605243-528.68527-4-0@rt.cpan.org>'],
         'Message-ID header was parsed properly'
     );
 
-    is(
-        $h->get('X-Spam-Level'),
-        q{},
+    is_deeply(
+        [ map { $_->value() } $h->get('X-Spam-Level') ],
+        [q{}],
         'X-Spam-Level (empty header) was parsed properly',
     );
 
-    is(
-        $h->get('X-Spam-Status'),
-        'No, score=-6.9 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_HI, T_RP_MATCHES_RCVD autolearn=ham version=3.3.1',
+    is_deeply(
+        [ map { $_->value() } $h->get('X-Spam-Status') ],
+        [
+            'No, score=-6.9 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_HI, T_RP_MATCHES_RCVD autolearn=ham version=3.3.1'
+        ],
         'X-Spam-Status header was parsed properly'
     );
 
@@ -531,3 +729,15 @@ EOF
 }
 
 done_testing();
+
+sub _headers_as_arrayref {
+    my $h = shift;
+
+    return [ map { blessed($_) ? $_->value() : $_ } $h->headers() ];
+}
+
+sub _attributes_as_hashref {
+    my $attrs = shift;
+
+    return { map { $_ => $attrs->{$_}->value() } keys %{$attrs} };
+}

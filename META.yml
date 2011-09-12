@@ -34,10 +34,11 @@ requires:
   MooseX::StrictConstructor: 0
   MooseX::Types: 0
   MooseX::Types::Common::String: 0
+  Scalar::Util: 0
   Sub::Exporter: 0
   namespace::autoclean: 0
   perl: 5.10.0
 resources:
   bugtracker: http://rt.cpan.org/NoAuth/Bugs.html?Dist=Courriel
   repository: git://git.urth.org/Courriel.git
-version: 0.19
+version: 0.20
