@@ -1,6 +1,6 @@
 package Courriel::Header;
 {
-  $Courriel::Header::VERSION = '0.21'; # TRIAL
+  $Courriel::Header::VERSION = '0.22'; # TRIAL
 }
 
 use strict;
@@ -40,7 +40,7 @@ Courriel::Header - A single header's name and value
 
 =head1 VERSION
 
-version 0.21
+version 0.22
 
 =head1 SYNOPSIS
 

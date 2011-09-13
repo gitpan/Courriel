@@ -1,3 +1,12 @@
+0.22     2011-09-13
+
+[BUG FIXES]
+
+- Require List::MoreUtils 0.28+, as tests fail with earlier versions.
+
+- Added missing prereq on File::Slurp.
+
+
 0.21     2011-09-12
 
 [BACKWARDS INCOMPATIBILITIES]
@@ -56,7 +65,7 @@
 [IMPROVEMENTS]
 
 - Header attributes with character set and language data per RFC2231 are now
-  parsed properly. Reported by zby.
+  parsed properly. Reported by zby. RT #70801.
 
 - Header attribute parsing is much laxer and will not die on bad attributes
   syntax (in most cases). It simply stops parsing and ignores bad data.

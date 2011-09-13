@@ -25,11 +25,17 @@ requires:
   Email::Address: 0
   Email::MIME::Encodings: 0
   Email::MessageID: 0
+  Encode: 0
+  Exporter: 0
+  File::Basename: 0
   File::LibMagic: 0
+  File::Slurp: 0
   List::AllUtils: 0
+  List::MoreUtils: 0.28
   MIME::Base64: 0
   MIME::QuotedPrint: 0
   Moose: 0
+  Moose::Role: 0
   MooseX::Params::Validate: 0
   MooseX::StrictConstructor: 0
   MooseX::Types: 0
@@ -37,8 +43,9 @@ requires:
   Scalar::Util: 0
   Sub::Exporter: 0
   namespace::autoclean: 0
+  parent: 0
   perl: 5.10.0
 resources:
   bugtracker: http://rt.cpan.org/NoAuth/Bugs.html?Dist=Courriel
   repository: git://git.urth.org/Courriel.git
-version: 0.21
+version: 0.22

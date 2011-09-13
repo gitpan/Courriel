@@ -1,6 +1,6 @@
 package Courriel::Header::ContentType;
 {
-  $Courriel::Header::ContentType::VERSION = '0.21'; # TRIAL
+  $Courriel::Header::ContentType::VERSION = '0.22'; # TRIAL
 }
 
 use strict;
@@ -95,7 +95,7 @@ Courriel::Header::ContentType - The content type for an email part
 
 =head1 VERSION
 
-version 0.21
+version 0.22
 
 =head1 SYNOPSIS
 
