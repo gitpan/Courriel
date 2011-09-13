@@ -1,6 +1,6 @@
 package Courriel::Role::HeaderWithAttributes;
 {
-  $Courriel::Role::HeaderWithAttributes::VERSION = '0.23';
+  $Courriel::Role::HeaderWithAttributes::VERSION = '0.24';
 }
 
 use strict;

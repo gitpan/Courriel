@@ -1,6 +1,6 @@
 package Courriel;
 {
-  $Courriel::VERSION = '0.23';
+  $Courriel::VERSION = '0.24';
 }
 
 use 5.10.0;
@@ -374,18 +374,18 @@ sub all_parts_matching {
 
 {
     my @spec = (
-        text      => { isa => StringRef, coerce  => 1 },
-        is_binary => { isa => Bool,      default => 1 },
+        text         => { isa => StringRef, coerce  => 1 },
+        is_character => { isa => Bool,      default => 0 },
     );
 
     sub parse {
         my $class = shift;
-        my ( $text, $is_binary ) = validated_list(
+        my ( $text, $is_character ) = validated_list(
             \@_,
             @spec,
         );
 
-        if ( !$is_binary ) {
+        if ($is_character) {
             ${$text} = encode( 'utf-8', ${$text} );
         }
 
@@ -534,7 +534,7 @@ Courriel - High level email parsing and manipulation
 
 =head1 VERSION
 
-version 0.23
+version 0.24
 
 =head1 SYNOPSIS
 
@@ -559,14 +559,14 @@ This class exists to provide a high level API for working with emails,
 particular for processing incoming email. It is primarily a wrapper around the
 other classes in the Courriel distro, especially L<Courriel::Headers>,
 L<Courriel::Part::Single>, and L<Courriel::Part::Multipart>. If you need lower
-level information about an email, it should be available from one of this
+level information about an email, it should be available from one of these
 classes.
 
 =head1 API
 
 This class provides the following methods:
 
-=head2 Courriel->parse( text => $raw_email, is_binary => 0|1 )
+=head2 Courriel->parse( text => $raw_email, is_character => 0|1 )
 
 This parses the given text and returns a new Courriel object. The text can be
 provided as a string or a reference to a string.
@@ -583,11 +583,11 @@ only ASCII data or they actually do contain binary (non-character)
 data. However, if an email is using the 8bit Content-Transfer-Encoding, then
 this does matter.
 
-If you the email has already been decoded, you must set C<is_binary> to a
-false value.
+If the email has already been decoded, you must set C<is_character> to a true
+value.
 
-It's probably safest to simply pass binary data to Courriel and let it handle
-decoding internally.
+It's safest to simply pass binary data to Courriel and let it handle decoding
+internally.
 
 =head2 $email->parts()
 
