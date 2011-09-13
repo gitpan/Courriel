@@ -1,6 +1,6 @@
 package Courriel::Header;
 {
-  $Courriel::Header::VERSION = '0.22'; # TRIAL
+  $Courriel::Header::VERSION = '0.23';
 }
 
 use strict;
@@ -40,7 +40,7 @@ Courriel::Header - A single header's name and value
 
 =head1 VERSION
 
-version 0.22
+version 0.23
 
 =head1 SYNOPSIS
 
@@ -57,8 +57,8 @@ This class supports the following methods:
 
 =head1 Courriel::Header->new( ... )
 
-This method requires two attributes, "name" and "value". Both must be
-strings. The "name" cannot be empty, but the "value" can.
+This method requires two attributes, C<name> and C<value>. Both must be
+strings. The C<name> cannot be empty, but the C<value> can.
 
 =head2 $header->name()
 

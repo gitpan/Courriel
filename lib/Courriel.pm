@@ -1,6 +1,6 @@
 package Courriel;
 {
-  $Courriel::VERSION = '0.22'; # TRIAL
+  $Courriel::VERSION = '0.23';
 }
 
 use 5.10.0;
@@ -19,6 +19,7 @@ use DateTime;
 use DateTime::Format::Mail;
 use DateTime::Format::Natural;
 use Email::Address;
+use Encode qw( encode );
 use List::AllUtils qw( uniq );
 use MooseX::Params::Validate qw( validated_list );
 
@@ -372,22 +373,29 @@ sub all_parts_matching {
 }
 
 {
-    my @spec = ( text => { isa => StringRef, coerce => 1 } );
+    my @spec = (
+        text      => { isa => StringRef, coerce  => 1 },
+        is_binary => { isa => Bool,      default => 1 },
+    );
 
     sub parse {
         my $class = shift;
-        my ($text) = validated_list(
+        my ( $text, $is_binary ) = validated_list(
             \@_,
             @spec,
         );
+
+        if ( !$is_binary ) {
+            ${$text} = encode( 'utf-8', ${$text} );
+        }
 
         return $class->new( part => $class->_parse($text) );
     }
 }
 
 sub _parse {
-    my $class = shift;
-    my $text  = shift;
+    my $class     = shift;
+    my $text      = shift;
 
     my ( $line_sep, $sep_idx, $headers ) = $class->_parse_headers($text);
 
@@ -526,7 +534,7 @@ Courriel - High level email parsing and manipulation
 
 =head1 VERSION
 
-version 0.22
+version 0.23
 
 =head1 SYNOPSIS
 
@@ -558,13 +566,28 @@ classes.
 
 This class provides the following methods:
 
-=head2 Courriel->parse( text => $raw_email )
+=head2 Courriel->parse( text => $raw_email, is_binary => 0|1 )
 
 This parses the given text and returns a new Courriel object. The text can be
 provided as a string or a reference to a string.
 
 If you pass a reference, then the scalar underlying the reference I<will> be
 modified, so don't pass in something you don't want modified.
+
+By default, Courriel expects that content passed in text is binary data. This
+means that it has not been decoded into utf-8 with L<Encode::decode()> or by
+using a C<:utf8> IO layer.
+
+In practice, this doesn't matter for most emails, since they either contain
+only ASCII data or they actually do contain binary (non-character)
+data. However, if an email is using the 8bit Content-Transfer-Encoding, then
+this does matter.
+
+If you the email has already been decoded, you must set C<is_binary> to a
+false value.
+
+It's probably safest to simply pass binary data to Courriel and let it handle
+decoding internally.
 
 =head2 $email->parts()
 

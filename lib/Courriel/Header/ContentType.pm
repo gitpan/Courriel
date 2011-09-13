@@ -1,6 +1,6 @@
 package Courriel::Header::ContentType;
 {
-  $Courriel::Header::ContentType::VERSION = '0.22'; # TRIAL
+  $Courriel::Header::ContentType::VERSION = '0.23';
 }
 
 use strict;
@@ -95,7 +95,7 @@ Courriel::Header::ContentType - The content type for an email part
 
 =head1 VERSION
 
-version 0.22
+version 0.23
 
 =head1 SYNOPSIS
 
@@ -128,10 +128,10 @@ This class supports the following methods:
 
 =head2 Courriel::Header::ContentType->new_from_value( ... )
 
-This takes two parameters, "name" and "value". The "name" is optional, and
+This takes two parameters, C<name> and C<value>. The C<name> is optional, and
 defaults to "Content-Type".
 
-The "value" is parsed and split up into the mime type and attributes.
+The C<value> is parsed and split up into the mime type and attributes.
 
 =head2 Courriel::Header::ContentType->new( ... )
 
