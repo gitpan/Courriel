@@ -1,10 +1,12 @@
 use strict;
 use warnings;
 
+use utf8;
 use Test::Differences;
 use Test::Fatal;
 use Test::More 0.88;
 
+use Courriel::Builder;
 use Courriel::Headers;
 use Courriel::Helpers;
 use Scalar::Util qw( blessed );
@@ -448,7 +450,7 @@ EOF
     );
 
     my $string = <<'EOF';
-Subject: =?UTF-8?B?wqFIb2xhLCBzZcOxb3Ih?=
+Subject: =?UTF-8?B?wqFIb2xhLCA=?= =?UTF-8?B?c2XDsW9yIQ==?=
 Bar: 2
 Baz: 3
 EOF
@@ -459,6 +461,13 @@ EOF
         $h->as_string(),
         $string,
         'got expected header string (encoded utf8 values)'
+    );
+
+    my $h2 = Courriel::Headers->parse( text => $h->as_string() );
+    is(
+        $h2->get_values('Subject'),
+        $h->get_values('Subject'),
+        'round trip encoding of header with utf8 value'
     );
 }
 
@@ -572,6 +581,38 @@ EOF
         ),
         [ Subject => $chinese ],
         'Chinese subject header round trips properly'
+    );
+}
+
+{
+    my $headers = <<'EOF';
+Subject: has   three spaces
+EOF
+
+    my $h = Courriel::Headers->parse( text => \$headers, line_sep => "\n" );
+
+    like(
+        $h->as_string(),
+        qr/\QSubject: has   three spaces/,
+        'original spacing in header value is preserved when stringified'
+    );
+}
+
+{
+    my $header = Courriel::Header->new(
+        name  => 'To',
+        value => q{"Ďāᶌȩ ȒȯƖŝķẏ" <autarch@urth.org>},
+    );
+
+    like(
+        $header->as_header_string(),
+        qr/
+              \Q?UTF-8?B?\E
+              \S+
+              \s+
+              \Q<autarch\E\@\Qurth.org>\E
+          /x,
+        'email address is not encoded but unicode content before it is'
     );
 }
 

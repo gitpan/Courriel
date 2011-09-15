@@ -1,6 +1,6 @@
 package Courriel::ContentType;
 {
-  $Courriel::ContentType::VERSION = '0.24';
+  $Courriel::ContentType::VERSION = '0.25';
 }
 
 BEGIN {
@@ -21,7 +21,7 @@ Courriel::ContentType - See Courriel::Header::ContentType
 
 =head1 VERSION
 
-version 0.24
+version 0.25
 
 =head1 AUTHOR
 
