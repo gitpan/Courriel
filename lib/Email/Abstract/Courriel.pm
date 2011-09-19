@@ -1,6 +1,6 @@
 package Email::Abstract::Courriel;
 {
-  $Email::Abstract::Courriel::VERSION = '0.25';
+  $Email::Abstract::Courriel::VERSION = '0.26';
 }
 
 use strict;
@@ -58,7 +58,7 @@ Email::Abstract::Courriel - Email::Abstract wrapper for Courriel
 
 =head1 VERSION
 
-version 0.25
+version 0.26
 
 =head1 DESCRIPTION
 

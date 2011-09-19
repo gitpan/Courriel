@@ -45,6 +45,7 @@ my %WriteMakefileArgs = (
     "Moose" => 0,
     "Moose::Role" => 0,
     "MooseX::Params::Validate" => 0,
+    "MooseX::Role::Parameterized" => 0,
     "MooseX::StrictConstructor" => 0,
     "MooseX::Types" => 0,
     "MooseX::Types::Common::String" => 0,
@@ -53,7 +54,7 @@ my %WriteMakefileArgs = (
     "namespace::autoclean" => 0,
     "parent" => 0
   },
-  "VERSION" => "0.25",
+  "VERSION" => "0.26",
   "test" => {
     "TESTS" => "t/*.t"
   }

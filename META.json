@@ -40,6 +40,7 @@
             "Moose" : 0,
             "Moose::Role" : 0,
             "MooseX::Params::Validate" : 0,
+            "MooseX::Role::Parameterized" : 0,
             "MooseX::StrictConstructor" : 0,
             "MooseX::Types" : 0,
             "MooseX::Types::Common::String" : 0,
@@ -72,6 +73,6 @@
          "web" : "http://git.urth.org/Courriel.git"
       }
    },
-   "version" : "0.25"
+   "version" : "0.26"
 }
 
