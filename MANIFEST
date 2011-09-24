@@ -22,6 +22,7 @@ lib/Courriel/Part/Multipart.pm
 lib/Courriel/Part/Single.pm
 lib/Courriel/Role/HeaderWithAttributes.pm
 lib/Courriel/Role/Part.pm
+lib/Courriel/Role/Streams.pm
 lib/Courriel/Types.pm
 lib/Courriel/Types/Internal.pm
 lib/Email/Abstract/Courriel.pm

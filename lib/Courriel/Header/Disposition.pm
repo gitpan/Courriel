@@ -1,6 +1,6 @@
 package Courriel::Header::Disposition;
 {
-  $Courriel::Header::Disposition::VERSION = '0.26';
+  $Courriel::Header::Disposition::VERSION = '0.27';
 }
 
 use strict;
@@ -113,7 +113,7 @@ Courriel::Header::Disposition - The content disposition for an email part
 
 =head1 VERSION
 
-version 0.26
+version 0.27
 
 =head1 SYNOPSIS
 

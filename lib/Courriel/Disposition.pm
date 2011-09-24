@@ -1,6 +1,6 @@
 package Courriel::Disposition;
 {
-  $Courriel::Disposition::VERSION = '0.26';
+  $Courriel::Disposition::VERSION = '0.27';
 }
 
 BEGIN {
@@ -21,7 +21,7 @@ Courriel::Disposition - See Courriel::Header::Disposition
 
 =head1 VERSION
 
-version 0.26
+version 0.27
 
 =head1 AUTHOR
 

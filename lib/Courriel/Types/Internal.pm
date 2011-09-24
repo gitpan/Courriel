@@ -1,6 +1,6 @@
 package Courriel::Types::Internal;
 {
-  $Courriel::Types::Internal::VERSION = '0.26';
+  $Courriel::Types::Internal::VERSION = '0.27';
 }
 
 use strict;
@@ -17,11 +17,13 @@ use MooseX::Types -declare => [
         HeaderArray
         Headers
         Part
+        Printable
+        Streamable
         StringRef
         )
 ];
 use MooseX::Types::Common::String qw( NonEmptyStr );
-use MooseX::Types::Moose qw( ArrayRef HashRef ScalarRef Str );
+use MooseX::Types::Moose qw( ArrayRef CodeRef FileHandle HashRef Object ScalarRef Str );
 
 #<<<
 subtype Body,
@@ -65,6 +67,27 @@ subtype HeaderArray,
 
 subtype Part,
     as role_type('Courriel::Role::Part');
+
+subtype Printable,
+    as Object,
+    where { $_->can('print') };
+
+subtype Streamable,
+    as CodeRef;
+
+coerce Streamable,
+    from FileHandle,
+    via sub {
+        my $fh = $_;
+        return sub { print {$fh} @_ };
+    };
+
+coerce Streamable,
+    from Printable,
+    via sub {
+        my $obj = $_;
+        return sub { $obj->print(@_) };
+    };
 
 subtype StringRef,
     as ScalarRef[Str];

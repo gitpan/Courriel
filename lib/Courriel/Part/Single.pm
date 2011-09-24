@@ -1,6 +1,6 @@
 package Courriel::Part::Single;
 {
-  $Courriel::Part::Single::VERSION = '0.26';
+  $Courriel::Part::Single::VERSION = '0.27';
 }
 
 use strict;
@@ -189,10 +189,11 @@ sub encoded_content {
     return ${ $_[0]->encoded_content_ref() };
 }
 
-sub _content_as_string {
-    my $self = shift;
+sub _stream_content {
+    my $self   = shift;
+    my $output = shift;
 
-    return $self->encoded_content();
+    return $output->( $self->encoded_content() );
 }
 
 __PACKAGE__->meta()->make_immutable();
@@ -211,7 +212,7 @@ Courriel::Part::Single - A part which does not contain other parts, only content
 
 =head1 VERSION
 
-version 0.26
+version 0.27
 
 =head1 SYNOPSIS
 
@@ -348,9 +349,19 @@ for the part, without any decoding.
 Returns the part as a string, along with its headers. Lines will be terminated
 with "\r\n".
 
+=head2 $part->stream_to( output => $output )
+
+This method will send the stringified part to the specified output. The
+output can be a subroutine reference, a filehandle, or an object with a
+C<print()> method. The output may be sent as a single string, as a list of
+strings, or via multiple calls to the output.
+
+See the C<as_string()> method for documentation on the C<charset> parameter.
+
 =head1 ROLES
 
-This class does the C<Courriel::Role::Part> role.
+This class does the C<Courriel::Role::Part> and L<Courriel::Role::Streams>
+roles.
 
 =head1 AUTHOR
 

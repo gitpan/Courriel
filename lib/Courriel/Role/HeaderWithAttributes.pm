@@ -1,6 +1,6 @@
 package Courriel::Role::HeaderWithAttributes;
 {
-  $Courriel::Role::HeaderWithAttributes::VERSION = '0.26';
+  $Courriel::Role::HeaderWithAttributes::VERSION = '0.27';
 }
 
 use strict;
@@ -76,7 +76,7 @@ sub _attributes_as_string {
 
     my $attr = $self->_attributes();
 
-    return join '; ', map { $attr->{$_}->as_header_string() } sort keys %{$attr};
+    return join '; ', map { $attr->{$_}->as_string() } sort keys %{$attr};
 }
 
 {

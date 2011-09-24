@@ -1,6 +1,6 @@
 package Courriel;
 {
-  $Courriel::VERSION = '0.26';
+  $Courriel::VERSION = '0.27';
 }
 
 use 5.10.0;
@@ -38,6 +38,7 @@ has top_level_part => (
             content_type
             headers
             is_multipart
+            stream_to
             )
     ]
 );
@@ -419,7 +420,7 @@ sub _parse_headers {
     # Some broken emails may split the From line in an arbitrary spot
     ${$text} =~ s/^[^:]+$Courriel::Helpers::LINE_SEP_RE//g;
 
-    if ( ${$text} =~ /(.+?)($Courriel::Helpers::LINE_SEP_RE)\2/s ) {
+    if ( ${$text} =~ /^(.+?)($Courriel::Helpers::LINE_SEP_RE)\g{2}/s ) {
         $header_text = $1 . $2;
         $sep_idx     = ( length $header_text ) + ( length $2 );
         $line_sep    = $2;
@@ -534,7 +535,7 @@ Courriel - High level email parsing and manipulation
 
 =head1 VERSION
 
-version 0.26
+version 0.27
 
 =head1 SYNOPSIS
 
@@ -695,6 +696,16 @@ Returns the L<Courriel::Header::ContentType> object associated with the email.
 =head2 $email->headers()
 
 Returns the L<Courriel::Headers> object for this email.
+
+=head2 $email->stream_to( output => $output )
+
+This method will send the stringified email to the specified output. The
+output can be a subroutine reference, a filehandle, or an object with a
+C<print()> method. The output may be sent as a single string, as a list of
+strings, or via multiple calls to the output.
+
+For large emails, streaming can be much more memory efficient than generating
+a single string in memory.
 
 =head2 $part->as_string()
 
