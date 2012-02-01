@@ -1,6 +1,6 @@
 package Courriel;
 {
-  $Courriel::VERSION = '0.27';
+  $Courriel::VERSION = '0.28';
 }
 
 use 5.10.0;
@@ -474,14 +474,12 @@ sub _parse_multipart {
     my $headers = shift;
     my $ct      = shift;
 
-    my $boundary_attr = $ct->attribute('boundary');
+    my $boundary = $ct->attribute_value('boundary');
 
     die q{The message's mime type claims this is a multipart message (}
         . $ct->mime_type()
         . q{) but it does not specify a boundary.}
-        unless $boundary_attr && length $boundary_attr->value();
-
-    my $boundary = $boundary_attr->value();
+        unless defined $boundary && length $boundary;
 
     my ( $preamble, $all_parts, $epilogue ) = ${$text} =~ /
                 (.*?)                   # preamble
@@ -535,7 +533,7 @@ Courriel - High level email parsing and manipulation
 
 =head1 VERSION
 
-version 0.27
+version 0.28
 
 =head1 SYNOPSIS
 
@@ -777,7 +775,7 @@ Dave Rolsky <autarch@urth.org>
 
 =head1 COPYRIGHT AND LICENSE
 
-This software is Copyright (c) 2011 by Dave Rolsky.
+This software is Copyright (c) 2012 by Dave Rolsky.
 
 This is free software, licensed under:
 

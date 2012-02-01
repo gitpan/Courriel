@@ -1,13 +1,13 @@
 package Courriel::Types;
 {
-  $Courriel::Types::VERSION = '0.27';
+  $Courriel::Types::VERSION = '0.28';
 }
 
 use strict;
 use warnings;
 use namespace::autoclean;
 
-use base 'MooseX::Types::Combine';
+use parent 'MooseX::Types::Combine';
 
 __PACKAGE__->provide_types_from(
     qw(

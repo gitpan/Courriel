@@ -1,6 +1,6 @@
 package Courriel::Header::Disposition;
 {
-  $Courriel::Header::Disposition::VERSION = '0.27';
+  $Courriel::Header::Disposition::VERSION = '0.28';
 }
 
 use strict;
@@ -113,7 +113,7 @@ Courriel::Header::Disposition - The content disposition for an email part
 
 =head1 VERSION
 
-version 0.27
+version 0.28
 
 =head1 SYNOPSIS
 
@@ -223,15 +223,21 @@ Returns a hash (not a reference) of the attributes passed to the constructor.
 
 Attributes are L<Courriel::HeaderAttribute> objects.
 
+The keys of the hash are all lower case, though the original casing is
+preserved in the C<name()> returned by the L<Courriel::HeaderAttribute>
+object.
+
 =head2 $disp->attribute($key)
 
-Given a key, returns the named L<Courriel::HeaderAttribute>
-object. Obviously, this value can be C<undef> if the attribute doesn't exist.
+Given a key, returns the named L<Courriel::HeaderAttribute> object. Obviously,
+this value can be C<undef> if the attribute doesn't exist. Name lookup is
+case-insensitive.
 
 =head2 $disp->attribute_value($key)
 
 Given a key, returns the named attribute's value as a string. Obviously, this
-value can be C<undef> if the attribute doesn't exist.
+value can be C<undef> if the attribute doesn't exist. Name lookup is
+case-insensitive.
 
 The attribute is a L<Courriel::HeaderAttribute> object.
 
@@ -253,7 +259,7 @@ Dave Rolsky <autarch@urth.org>
 
 =head1 COPYRIGHT AND LICENSE
 
-This software is Copyright (c) 2011 by Dave Rolsky.
+This software is Copyright (c) 2012 by Dave Rolsky.
 
 This is free software, licensed under:
 

@@ -1,6 +1,6 @@
 package Courriel::HeaderAttribute;
 {
-  $Courriel::HeaderAttribute::VERSION = '0.27';
+  $Courriel::HeaderAttribute::VERSION = '0.28';
 }
 
 use strict;
@@ -169,6 +169,8 @@ sub _encoded_parameter {
     return $param;
 }
 
+__PACKAGE__->meta()->make_immutable();
+
 1;
 
 # ABSTRACT: A single attribute belonging to a header
@@ -183,7 +185,7 @@ Courriel::HeaderAttribute - A single attribute belonging to a header
 
 =head1 VERSION
 
-version 0.27
+version 0.28
 
 =head1 SYNOPSIS
 
@@ -267,7 +269,7 @@ Dave Rolsky <autarch@urth.org>
 
 =head1 COPYRIGHT AND LICENSE
 
-This software is Copyright (c) 2011 by Dave Rolsky.
+This software is Copyright (c) 2012 by Dave Rolsky.
 
 This is free software, licensed under:
 

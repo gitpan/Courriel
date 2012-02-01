@@ -4,7 +4,7 @@
       "Dave Rolsky <autarch@urth.org>"
    ],
    "dynamic_config" : 0,
-   "generated_by" : "Dist::Zilla version 4.300002, CPAN::Meta::Converter version 2.110930",
+   "generated_by" : "Dist::Zilla version 4.300006, CPAN::Meta::Converter version 2.113640",
    "license" : [
       "artistic_2"
    ],
@@ -21,10 +21,12 @@
       },
       "runtime" : {
          "requires" : {
+            "Carp" : 0,
             "DateTime" : 0,
             "DateTime::Format::Mail" : 0,
             "DateTime::Format::Natural" : 0,
             "Devel::PartialDump" : 0,
+            "Email::Abstract::Plugin" : 0,
             "Email::Address" : 0,
             "Email::MIME::Encodings" : 0,
             "Email::MessageID" : 0,
@@ -43,21 +45,25 @@
             "MooseX::Role::Parameterized" : 0,
             "MooseX::StrictConstructor" : 0,
             "MooseX::Types" : 0,
+            "MooseX::Types::Combine" : 0,
             "MooseX::Types::Common::String" : 0,
+            "MooseX::Types::Moose" : 0,
             "Scalar::Util" : 0,
             "Sub::Exporter" : 0,
             "namespace::autoclean" : 0,
             "parent" : 0,
-            "perl" : "v5.10.0"
+            "perl" : "v5.10.0",
+            "strict" : 0,
+            "warnings" : 0
          }
       },
       "test" : {
          "requires" : {
-            "File::Slurp" : 0,
             "Test::Differences" : 0,
             "Test::Fatal" : 0,
             "Test::More" : "0.88",
-            "Test::Requires" : 0
+            "Test::Requires" : 0,
+            "utf8" : 0
          }
       }
    },
@@ -73,6 +79,6 @@
          "web" : "http://git.urth.org/Courriel.git"
       }
    },
-   "version" : "0.27"
+   "version" : "0.28"
 }
 

@@ -45,6 +45,7 @@ distro
 filename
 html
 inline
+lookup
 multipart
 utf
 zh
