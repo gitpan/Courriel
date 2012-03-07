@@ -1,6 +1,6 @@
 package Courriel::Builder;
 {
-  $Courriel::Builder::VERSION = '0.28';
+  $Courriel::Builder::VERSION = '0.29';
 }
 
 use strict;
@@ -158,7 +158,7 @@ sub _add_required_headers {
 }
 
 {
-    my $spec = { isa => NonEmptyStr };
+    my $spec = { isa => Str };
 
     sub subject {
         my ($subject) = pos_validated_list(
@@ -475,7 +475,7 @@ Courriel::Builder - Build emails with sugar
 
 =head1 VERSION
 
-version 0.28
+version 0.29
 
 =head1 SYNOPSIS
 
@@ -521,7 +521,8 @@ them, ensuring that the email is RFC-compliant.
 
 =head2 subject($subject)
 
-This sets the subject of the email. It expects a single string.
+This sets the subject of the email. It expects a single string. You can pass
+an empty string, but not C<undef>.
 
 =head2 from($from)
 

@@ -1,6 +1,6 @@
 package Courriel::HeaderAttribute;
 {
-  $Courriel::HeaderAttribute::VERSION = '0.28';
+  $Courriel::HeaderAttribute::VERSION = '0.29';
 }
 
 use strict;
@@ -185,7 +185,7 @@ Courriel::HeaderAttribute - A single attribute belonging to a header
 
 =head1 VERSION
 
-version 0.28
+version 0.29
 
 =head1 SYNOPSIS
 

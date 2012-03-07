@@ -1,6 +1,6 @@
 package Courriel::Part::Multipart;
 {
-  $Courriel::Part::Multipart::VERSION = '0.28';
+  $Courriel::Part::Multipart::VERSION = '0.29';
 }
 
 use strict;
@@ -121,7 +121,7 @@ Courriel::Part::Multipart - A part which contains other parts
 
 =head1 VERSION
 
-version 0.28
+version 0.29
 
 =head1 SYNOPSIS
 

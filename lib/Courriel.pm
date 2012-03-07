@@ -1,6 +1,6 @@
 package Courriel;
 {
-  $Courriel::VERSION = '0.28';
+  $Courriel::VERSION = '0.29';
 }
 
 use 5.10.0;
@@ -14,7 +14,7 @@ use Courriel::Helpers qw( unique_boundary );
 use Courriel::Part::Multipart;
 use Courriel::Part::Single;
 use Courriel::Types
-    qw( ArrayRef Bool Headers Maybe NonEmptyStr Part StringRef );
+    qw( ArrayRef Bool Headers Maybe Part Str StringRef );
 use DateTime;
 use DateTime::Format::Mail;
 use DateTime::Format::Natural;
@@ -45,7 +45,7 @@ has top_level_part => (
 
 has subject => (
     is       => 'ro',
-    isa      => Maybe [NonEmptyStr],
+    isa      => Maybe [Str],
     init_arg => undef,
     lazy     => 1,
     builder  => '_build_subject',
@@ -387,7 +387,7 @@ sub all_parts_matching {
         );
 
         if ($is_character) {
-            ${$text} = encode( 'utf-8', ${$text} );
+            ${$text} = encode( 'UTF-8', ${$text} );
         }
 
         return $class->new( part => $class->_parse($text) );
@@ -533,7 +533,7 @@ Courriel - High level email parsing and manipulation
 
 =head1 VERSION
 
-version 0.28
+version 0.29
 
 =head1 SYNOPSIS
 
@@ -575,7 +575,7 @@ modified, so don't pass in something you don't want modified.
 
 By default, Courriel expects that content passed in text is binary data. This
 means that it has not been decoded into utf-8 with C<Encode::decode()> or by
-using a C<:utf8> IO layer.
+using a C<:encoding(UTF-8)> IO layer.
 
 In practice, this doesn't matter for most emails, since they either contain
 only ASCII data or they actually do contain binary (non-character)
