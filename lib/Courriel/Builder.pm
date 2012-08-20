@@ -1,6 +1,6 @@
 package Courriel::Builder;
 {
-  $Courriel::Builder::VERSION = '0.29';
+  $Courriel::Builder::VERSION = '0.30';
 }
 
 use strict;
@@ -36,7 +36,6 @@ BEGIN {
         from
         to
         cc
-        bcc
         header
         plain_body
         html_body
@@ -218,23 +217,6 @@ sub _add_required_headers {
         @cc = map { blessed($_) ? $_->format() : $_ } @cc;
 
         return { header => [ Cc => join ', ', @cc ] };
-    }
-}
-
-{
-    my $spec = { isa => EmailAddressStr, coerce => 1 };
-
-    sub bcc {
-        my $count = @_ ? @_ : 1;
-        my (@bcc) = pos_validated_list(
-            \@_,
-            ($spec) x $count,
-            MX_PARAMS_VALIDATE_NO_CACHE => 1,
-        );
-
-        @bcc = map { blessed($_) ? $_->format() : $_ } @bcc;
-
-        return { header => [ Bcc => join ', ', @bcc ] };
     }
 }
 
@@ -475,7 +457,7 @@ Courriel::Builder - Build emails with sugar
 
 =head1 VERSION
 
-version 0.29
+version 0.30
 
 =head1 SYNOPSIS
 
@@ -537,11 +519,6 @@ L<Email::Address> objects.
 =head2 cc($from)
 
 This sets the Cc header of the email. It expects a list of string and/or
-L<Email::Address> objects.
-
-=head2 bcc($from)
-
-This sets the Bcc header of the email. It expects a list of string and/or
 L<Email::Address> objects.
 
 =head2 header( $name => $value )
