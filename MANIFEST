@@ -8,6 +8,7 @@ Makefile.PL
 README
 benchmarks/vs-email-mime
 dist.ini
+eg/sendgrid
 lib/Courriel.pm
 lib/Courriel/Builder.pm
 lib/Courriel/ContentType.pm
@@ -97,8 +98,10 @@ t/data/stress-test/test_date_realistic.eml
 t/release-cpan-changes.t
 t/release-no-tabs.t
 t/release-pod-coverage.t
+t/release-pod-linkcheck.t
 t/release-pod-no404s.t
 t/release-pod-spell.t
 t/release-pod-syntax.t
 t/stress.t
 t/weird-input.t
+weaver.ini

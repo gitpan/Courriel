@@ -1,6 +1,6 @@
 package Email::Abstract::Courriel;
 {
-  $Email::Abstract::Courriel::VERSION = '0.30';
+  $Email::Abstract::Courriel::VERSION = '0.31';
 }
 
 use strict;
@@ -48,7 +48,7 @@ sub as_string {
 
 #ABSTRACT: Email::Abstract wrapper for Courriel
 
-
+__END__
 
 =pod
 
@@ -58,7 +58,7 @@ Email::Abstract::Courriel - Email::Abstract wrapper for Courriel
 
 =head1 VERSION
 
-version 0.30
+version 0.31
 
 =head1 DESCRIPTION
 
@@ -73,17 +73,16 @@ L<Email::Abstract>, L<Courriel>.
 
 Dave Rolsky <autarch@urth.org>
 
+=head1 CONTRIBUTOR
+
+Zbigniew Łukasiak <zzbbyy@gmail.com>
+
 =head1 COPYRIGHT AND LICENSE
 
-This software is Copyright (c) 2012 by Dave Rolsky.
+This software is Copyright (c) 2013 by Dave Rolsky.
 
 This is free software, licensed under:
 
   The Artistic License 2.0 (GPL Compatible)
 
 =cut
-
-
-__END__
-
-

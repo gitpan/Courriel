@@ -1,6 +1,6 @@
 package Courriel::Role::Streams;
 {
-  $Courriel::Role::Streams::VERSION = '0.30';
+  $Courriel::Role::Streams::VERSION = '0.31';
 }
 
 use strict;

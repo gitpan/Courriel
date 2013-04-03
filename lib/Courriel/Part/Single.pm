@@ -1,6 +1,6 @@
 package Courriel::Part::Single;
 {
-  $Courriel::Part::Single::VERSION = '0.30';
+  $Courriel::Part::Single::VERSION = '0.31';
 }
 
 use strict;
@@ -202,7 +202,7 @@ __PACKAGE__->meta()->make_immutable();
 
 # ABSTRACT: A part which does not contain other parts, only content
 
-
+__END__
 
 =pod
 
@@ -212,7 +212,7 @@ Courriel::Part::Single - A part which does not contain other parts, only content
 
 =head1 VERSION
 
-version 0.30
+version 0.31
 
 =head1 SYNOPSIS
 
@@ -367,16 +367,16 @@ roles.
 
 Dave Rolsky <autarch@urth.org>
 
+=head1 CONTRIBUTOR
+
+Zbigniew Łukasiak <zzbbyy@gmail.com>
+
 =head1 COPYRIGHT AND LICENSE
 
-This software is Copyright (c) 2012 by Dave Rolsky.
+This software is Copyright (c) 2013 by Dave Rolsky.
 
 This is free software, licensed under:
 
   The Artistic License 2.0 (GPL Compatible)
 
 =cut
-
-
-__END__
-

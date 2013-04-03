@@ -1,6 +1,6 @@
 package Courriel::Header::Disposition;
 {
-  $Courriel::Header::Disposition::VERSION = '0.30';
+  $Courriel::Header::Disposition::VERSION = '0.31';
 }
 
 use strict;
@@ -103,7 +103,7 @@ __PACKAGE__->meta()->make_immutable();
 
 # ABSTRACT: The content disposition for an email part
 
-
+__END__
 
 =pod
 
@@ -113,7 +113,7 @@ Courriel::Header::Disposition - The content disposition for an email part
 
 =head1 VERSION
 
-version 0.30
+version 0.31
 
 =head1 SYNOPSIS
 
@@ -257,16 +257,16 @@ This class does the L<Courriel::Role::HeaderWithAttributes> role.
 
 Dave Rolsky <autarch@urth.org>
 
+=head1 CONTRIBUTOR
+
+Zbigniew Łukasiak <zzbbyy@gmail.com>
+
 =head1 COPYRIGHT AND LICENSE
 
-This software is Copyright (c) 2012 by Dave Rolsky.
+This software is Copyright (c) 2013 by Dave Rolsky.
 
 This is free software, licensed under:
 
   The Artistic License 2.0 (GPL Compatible)
 
 =cut
-
-
-__END__
-

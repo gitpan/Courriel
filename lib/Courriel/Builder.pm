@@ -1,6 +1,6 @@
 package Courriel::Builder;
 {
-  $Courriel::Builder::VERSION = '0.30';
+  $Courriel::Builder::VERSION = '0.31';
 }
 
 use strict;
@@ -447,7 +447,7 @@ sub _attachment_disposition {
 
 # ABSTRACT: Build emails with sugar
 
-
+__END__
 
 =pod
 
@@ -457,7 +457,7 @@ Courriel::Builder - Build emails with sugar
 
 =head1 VERSION
 
-version 0.30
+version 0.31
 
 =head1 SYNOPSIS
 
@@ -662,12 +662,12 @@ This creates an email with this structure:
         html_body(
             $html_text,
             attach(
-                file => 'path/to/image1.jpg',
-                cid  => 'image1',
+                file       => 'path/to/image1.jpg',
+                content_id => 'image1',
             ),
             attach(
-                file => 'path/to/image2.jpg',
-                cid  => 'image2',
+                file       => 'path/to/image2.jpg',
+                content_id => 'image2',
             ),
         ),
     );
@@ -697,6 +697,8 @@ This creates an email with this structure:
         attach( content => \$png_image_content ),
     );
 
+This creates an email with this structure:
+
     multipart/mixed
       |
       |-- multipart/alternative
@@ -711,16 +713,16 @@ This creates an email with this structure:
 
 Dave Rolsky <autarch@urth.org>
 
+=head1 CONTRIBUTOR
+
+Zbigniew Łukasiak <zzbbyy@gmail.com>
+
 =head1 COPYRIGHT AND LICENSE
 
-This software is Copyright (c) 2012 by Dave Rolsky.
+This software is Copyright (c) 2013 by Dave Rolsky.
 
 This is free software, licensed under:
 
   The Artistic License 2.0 (GPL Compatible)
 
 =cut
-
-
-__END__
-

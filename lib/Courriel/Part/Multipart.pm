@@ -1,6 +1,6 @@
 package Courriel::Part::Multipart;
 {
-  $Courriel::Part::Multipart::VERSION = '0.30';
+  $Courriel::Part::Multipart::VERSION = '0.31';
 }
 
 use strict;
@@ -111,7 +111,7 @@ __PACKAGE__->meta()->make_immutable();
 
 # ABSTRACT: A part which contains other parts
 
-
+__END__
 
 =pod
 
@@ -121,7 +121,7 @@ Courriel::Part::Multipart - A part which contains other parts
 
 =head1 VERSION
 
-version 0.30
+version 0.31
 
 =head1 SYNOPSIS
 
@@ -243,16 +243,16 @@ roles.
 
 Dave Rolsky <autarch@urth.org>
 
+=head1 CONTRIBUTOR
+
+Zbigniew Łukasiak <zzbbyy@gmail.com>
+
 =head1 COPYRIGHT AND LICENSE
 
-This software is Copyright (c) 2012 by Dave Rolsky.
+This software is Copyright (c) 2013 by Dave Rolsky.
 
 This is free software, licensed under:
 
   The Artistic License 2.0 (GPL Compatible)
 
 =cut
-
-
-__END__
-

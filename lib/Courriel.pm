@@ -1,6 +1,6 @@
 package Courriel;
 {
-  $Courriel::VERSION = '0.30';
+  $Courriel::VERSION = '0.31';
 }
 
 use 5.10.0;
@@ -429,8 +429,6 @@ sub _parse_headers {
         return ( q{}, 0, Courriel::Headers::->new() );
     }
 
-    # Need to quote class name or else this perl sees this as
-    # Courriel::Headers() because of the Headers type constraint.
     my $headers = Courriel::Headers::->parse(
         text     => \$header_text,
         line_sep => $line_sep,
@@ -523,7 +521,7 @@ __PACKAGE__->meta()->make_immutable();
 
 # ABSTRACT: High level email parsing and manipulation
 
-
+__END__
 
 =pod
 
@@ -533,7 +531,7 @@ Courriel - High level email parsing and manipulation
 
 =head1 VERSION
 
-version 0.30
+version 0.31
 
 =head1 SYNOPSIS
 
@@ -550,9 +548,6 @@ version 0.30
     }
 
 =head1 DESCRIPTION
-
-B<This software is still very alpha, and the API may change without warning in
-future versions.>
 
 This class exists to provide a high level API for working with emails,
 particular for processing incoming email. It is primarily a wrapper around the
@@ -769,20 +764,44 @@ better than the ones mentioned above.
 This module rips some chunks of code from a few other places, notably several
 of the Email suite modules.
 
+=head1 BUGS
+
+Please report any bugs or feature requests to C<bug-courriel@rt.cpan.org>, or
+through the web interface at L<http://rt.cpan.org>.  I will be notified, and
+then you'll automatically be notified of progress on your bug as I make
+changes.
+
+=head1 DONATIONS
+
+If you'd like to thank me for the work I've done on this module, please
+consider making a "donation" to me via PayPal. I spend a lot of free time
+creating free software, and would appreciate any support you'd care to offer.
+
+Please note that B<I am not suggesting that you must do this> in order for me
+to continue working on this particular software. I will continue to do so,
+inasmuch as I have in the past, for as long as it interests me.
+
+Similarly, a donation made in this way will probably not make me work on this
+software much more, unless I get so many donations that I can consider working
+on free software full time, which seems unlikely at best.
+
+To donate, log into PayPal and send money to autarch@urth.org or use the
+button on this page: L<http://www.urth.org/~autarch/fs-donation.html>
+
 =head1 AUTHOR
 
 Dave Rolsky <autarch@urth.org>
 
+=head1 CONTRIBUTOR
+
+Zbigniew Łukasiak <zzbbyy@gmail.com>
+
 =head1 COPYRIGHT AND LICENSE
 
-This software is Copyright (c) 2012 by Dave Rolsky.
+This software is Copyright (c) 2013 by Dave Rolsky.
 
 This is free software, licensed under:
 
   The Artistic License 2.0 (GPL Compatible)
 
 =cut
-
-
-__END__
-
