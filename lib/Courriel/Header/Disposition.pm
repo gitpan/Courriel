@@ -1,8 +1,5 @@
 package Courriel::Header::Disposition;
-{
-  $Courriel::Header::Disposition::VERSION = '0.31';
-}
-
+$Courriel::Header::Disposition::VERSION = '0.32';
 use strict;
 use warnings;
 use namespace::autoclean;
@@ -113,7 +110,7 @@ Courriel::Header::Disposition - The content disposition for an email part
 
 =head1 VERSION
 
-version 0.31
+version 0.32
 
 =head1 SYNOPSIS
 
@@ -145,6 +142,8 @@ Here are some typical headers:
 
   Content-Disposition: attachment; filename="foo-bar.jpg";
     creation-date="Tue, 31 May 2011 09:41:13 -0700"
+
+=encoding utf-8
 
 =head1 API
 
@@ -263,7 +262,7 @@ Zbigniew Łukasiak <zzbbyy@gmail.com>
 
 =head1 COPYRIGHT AND LICENSE
 
-This software is Copyright (c) 2013 by Dave Rolsky.
+This software is Copyright (c) 2014 by Dave Rolsky.
 
 This is free software, licensed under:
 

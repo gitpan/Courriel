@@ -1,8 +1,5 @@
 package Courriel::Role::Streams;
-{
-  $Courriel::Role::Streams::VERSION = '0.31';
-}
-
+$Courriel::Role::Streams::VERSION = '0.32';
 use strict;
 use warnings;
 use namespace::autoclean;

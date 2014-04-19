@@ -1,8 +1,5 @@
 package Courriel::Headers;
-{
-  $Courriel::Headers::VERSION = '0.31';
-}
-
+$Courriel::Headers::VERSION = '0.32';
 use strict;
 use warnings;
 use namespace::autoclean;
@@ -273,38 +270,35 @@ sub _key_indices_for {
 }
 
 {
+    my $horiz_text = qr/[^\x0a\x0d]/;
     my $horiz_ws = qr/[ \t]/;
     my $line_re  = qr/
                       (?:
                           ([^\s:][^:\n\r]*)  # a header name
                           :                  # followed by a colon
                           $horiz_ws*
-                          (.*)               # header value - can be empty
+                          ($horiz_text*)     # header value - can be empty
                       )
                       |
-                      $horiz_ws+(\S.*)?      # continuation line
+                      $horiz_ws+(\S$horiz_text*)?      # continuation line
                      /x;
 
     my @spec = (
         text => { isa => StringRef, coerce => 1 },
-        line_sep =>
-            { isa => NonEmptyStr, default => $Courriel::Helpers::CRLF },
     );
 
     sub parse {
         my $class = shift;
-        my ( $text, $sep ) = validated_list(
+        my ( $text ) = validated_list(
             \@_,
             @spec,
         );
 
         my @headers;
 
-        my $sep_re = qr/\Q$sep/;
+        $class->_maybe_fix_broken_headers($text);
 
-        $class->_maybe_fix_broken_headers( $text, $sep_re );
-
-        while ( ${$text} =~ /\G${line_re}${sep_re}/gc ) {
+        while ( ${$text} =~ /\G${line_re}$Courriel::Helpers::LINE_SEP_RE/gc ) {
             if ( defined $1 ) {
                 push @headers, $1, $2;
             }
@@ -315,11 +309,11 @@ sub _key_indices_for {
 
                 $headers[-1] //= q{};
 
-                # Looking at RFC 5322 it really seems like the whitespace on
-                # the continuation line should be part of the header value,
-                # but looking at emails in real use suggests that all the
-                # leading whitespace should be compressed down to a single
-                # space, so that's what we do.
+                # RFC 5322 says:
+                #
+                #   Runs of FWS, comment, or CFWS that occur between lexical tokens in a
+                #   structured header field are semantically interpreted as a single
+                #   space character.
                 $headers[-1] .= q{ } if length $headers[-1];
                 $headers[-1] .= $3 if defined $3;
             }
@@ -327,10 +321,10 @@ sub _key_indices_for {
 
         my $pos = pos ${$text} // 0;
         if ( $pos != length ${$text} ) {
-            my @lines = split $sep_re, substr( ${$text}, 0, $pos );
+            my @lines = split $Courriel::Helpers::LINE_SEP_RE, substr( ${$text}, 0, $pos );
             my $count = ( scalar @lines ) + 1;
 
-            my $line = ( split $sep_re, ${$text} )[ $count - 1 ];
+            my $line = ( split $Courriel::Helpers::LINE_SEP_RE, ${$text} )[ $count - 1 ];
 
             die defined $line
                 ? "Found an unparseable chunk in the header text starting at line $count:\n  $line"
@@ -346,14 +340,13 @@ sub _key_indices_for {
 }
 
 sub _maybe_fix_broken_headers {
-    my $class  = shift;
-    my $text   = shift;
-    my $sep_re = shift;
+    my $class = shift;
+    my $text  = shift;
 
     # Some broken email messages have a newline in the headers that isn't
     # acting as a continuation, it's just an arbitrary line break. See
     # t/data/stress-test/mbox_mime_applemail_1xb.txt
-    ${$text} =~ s/$sep_re([^\s:][^:]+$sep_re)/$1/g;
+    ${$text} =~ s/$Courriel::Helpers::LINE_SEP_RE([^\s:][^:]+$Courriel::Helpers::LINE_SEP_RE)/$1/g;
 
     return;
 }
@@ -487,7 +480,7 @@ Courriel::Headers - The headers for an email part
 
 =head1 VERSION
 
-version 0.31
+version 0.32
 
 =head1 SYNOPSIS
 
@@ -520,6 +513,8 @@ This is stored as a L<Courriel::Header::Disposition> object.
 
 =back
 
+=encoding utf-8
+
 =head1 API
 
 This class supports the following methods:
@@ -535,12 +530,6 @@ parameters:
 
 The text to parse. This can either be a plain scalar or a reference to a
 scalar. If you pass a reference, the underlying scalar may be modified.
-
-=item * line_sep
-
-The line separator. This default to a "\r\n", but you can change it if
-necessary. Note that this only affects parsing, header objects are always
-output with RFC-compliant line endings.
 
 =back
 
@@ -634,7 +623,7 @@ Zbigniew Łukasiak <zzbbyy@gmail.com>
 
 =head1 COPYRIGHT AND LICENSE
 
-This software is Copyright (c) 2013 by Dave Rolsky.
+This software is Copyright (c) 2014 by Dave Rolsky.
 
 This is free software, licensed under:
 

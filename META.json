@@ -4,7 +4,7 @@
       "Dave Rolsky <autarch@urth.org>"
    ],
    "dynamic_config" : 0,
-   "generated_by" : "Dist::Zilla version 4.300032, CPAN::Meta::Converter version 2.120921",
+   "generated_by" : "Dist::Zilla version 5.015, CPAN::Meta::Converter version 2.120921",
    "license" : [
       "artistic_2"
    ],
@@ -84,9 +84,9 @@
          "web" : "http://git.urth.org/Courriel.git"
       }
    },
-   "version" : "0.31",
+   "version" : "0.32",
    "x_contributors" : [
-      "Zbigniew \u00c5\u0081ukasiak <zzbbyy@gmail.com>"
+      "Zbigniew Łukasiak <zzbbyy@gmail.com>"
    ]
 }
 

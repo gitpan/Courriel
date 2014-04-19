@@ -1,8 +1,5 @@
 package Courriel::Header::ContentType;
-{
-  $Courriel::Header::ContentType::VERSION = '0.31';
-}
-
+$Courriel::Header::ContentType::VERSION = '0.32';
 use strict;
 use warnings;
 use namespace::autoclean;
@@ -95,7 +92,7 @@ Courriel::Header::ContentType - The content type for an email part
 
 =head1 VERSION
 
-version 0.31
+version 0.32
 
 =head1 SYNOPSIS
 
@@ -121,6 +118,8 @@ Here are some typical headers:
   Content-Type: multipart/alternative; boundary=abcdefghijk
 
   Content-Type: image/jpeg; name="Filename.jpg"
+
+=encoding utf-8
 
 =head1 API
 
@@ -234,7 +233,7 @@ Zbigniew Łukasiak <zzbbyy@gmail.com>
 
 =head1 COPYRIGHT AND LICENSE
 
-This software is Copyright (c) 2013 by Dave Rolsky.
+This software is Copyright (c) 2014 by Dave Rolsky.
 
 This is free software, licensed under:
 

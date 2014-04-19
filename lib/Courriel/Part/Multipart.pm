@@ -1,8 +1,5 @@
 package Courriel::Part::Multipart;
-{
-  $Courriel::Part::Multipart::VERSION = '0.31';
-}
-
+$Courriel::Part::Multipart::VERSION = '0.32';
 use strict;
 use warnings;
 use namespace::autoclean;
@@ -121,7 +118,7 @@ Courriel::Part::Multipart - A part which contains other parts
 
 =head1 VERSION
 
-version 0.31
+version 0.32
 
 =head1 SYNOPSIS
 
@@ -133,6 +130,8 @@ version 0.31
 =head1 DESCRIPTION
 
 This class represents a multipart email part which contains other parts.
+
+=encoding utf-8
 
 =head1 API
 
@@ -249,7 +248,7 @@ Zbigniew Łukasiak <zzbbyy@gmail.com>
 
 =head1 COPYRIGHT AND LICENSE
 
-This software is Copyright (c) 2013 by Dave Rolsky.
+This software is Copyright (c) 2014 by Dave Rolsky.
 
 This is free software, licensed under:
 

@@ -1,8 +1,5 @@
 package Courriel;
-{
-  $Courriel::VERSION = '0.31';
-}
-
+$Courriel::VERSION = '0.32';
 use 5.10.0;
 
 use strict;
@@ -398,7 +395,7 @@ sub _parse {
     my $class     = shift;
     my $text      = shift;
 
-    my ( $line_sep, $sep_idx, $headers ) = $class->_parse_headers($text);
+    my ( $sep_idx, $headers ) = $class->_parse_headers($text);
 
     substr( ${$text}, 0, $sep_idx ) = q{};
 
@@ -411,7 +408,6 @@ sub _parse_headers {
 
     my $header_text;
     my $sep_idx;
-    my $line_sep;
 
     # We want to ignore mbox message separators - this is a pretty lax parser,
     # but we may find broken lines. The key is that it starts with From
@@ -423,18 +419,16 @@ sub _parse_headers {
     if ( ${$text} =~ /^(.+?)($Courriel::Helpers::LINE_SEP_RE)\g{2}/s ) {
         $header_text = $1 . $2;
         $sep_idx     = ( length $header_text ) + ( length $2 );
-        $line_sep    = $2;
     }
     else {
-        return ( q{}, 0, Courriel::Headers::->new() );
+        return ( 0, Courriel::Headers::->new() );
     }
 
     my $headers = Courriel::Headers::->parse(
-        text     => \$header_text,
-        line_sep => $line_sep,
+        text => \$header_text,
     );
 
-    return ( $line_sep, $sep_idx, $headers );
+    return ( $sep_idx, $headers );
 }
 
 {
@@ -531,7 +525,7 @@ Courriel - High level email parsing and manipulation
 
 =head1 VERSION
 
-version 0.31
+version 0.32
 
 =head1 SYNOPSIS
 
@@ -555,6 +549,8 @@ other classes in the Courriel distro, especially L<Courriel::Headers>,
 L<Courriel::Part::Single>, and L<Courriel::Part::Multipart>. If you need lower
 level information about an email, it should be available from one of these
 classes.
+
+=encoding utf-8
 
 =head1 API
 
@@ -798,7 +794,7 @@ Zbigniew Łukasiak <zzbbyy@gmail.com>
 
 =head1 COPYRIGHT AND LICENSE
 
-This software is Copyright (c) 2013 by Dave Rolsky.
+This software is Copyright (c) 2014 by Dave Rolsky.
 
 This is free software, licensed under:
 

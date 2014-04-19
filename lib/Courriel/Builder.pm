@@ -1,8 +1,5 @@
 package Courriel::Builder;
-{
-  $Courriel::Builder::VERSION = '0.31';
-}
-
+$Courriel::Builder::VERSION = '0.32';
 use strict;
 use warnings;
 
@@ -457,7 +454,7 @@ Courriel::Builder - Build emails with sugar
 
 =head1 VERSION
 
-version 0.31
+version 0.32
 
 =head1 SYNOPSIS
 
@@ -483,6 +480,8 @@ version 0.31
 This module provides some sugar syntax for emails of all shapes sizes, from
 simple emails with a plain text body to emails with both plain and html
 bodies, html with attached images, etc.
+
+=encoding utf-8
 
 =head1 API
 
@@ -719,7 +718,7 @@ Zbigniew Łukasiak <zzbbyy@gmail.com>
 
 =head1 COPYRIGHT AND LICENSE
 
-This software is Copyright (c) 2013 by Dave Rolsky.
+This software is Copyright (c) 2014 by Dave Rolsky.
 
 This is free software, licensed under:
 

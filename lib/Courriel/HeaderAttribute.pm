@@ -1,8 +1,5 @@
 package Courriel::HeaderAttribute;
-{
-  $Courriel::HeaderAttribute::VERSION = '0.31';
-}
-
+$Courriel::HeaderAttribute::VERSION = '0.32';
 use strict;
 use warnings;
 use namespace::autoclean;
@@ -185,7 +182,7 @@ Courriel::HeaderAttribute - A single attribute belonging to a header
 
 =head1 VERSION
 
-version 0.31
+version 0.32
 
 =head1 SYNOPSIS
 
@@ -196,6 +193,8 @@ version 0.31
 
 This class represents a single attribute belonging to a header. An attribute
 consists of a name and value, with optional charset and language information.
+
+=encoding utf-8
 
 =head1 API
 
@@ -273,7 +272,7 @@ Zbigniew Łukasiak <zzbbyy@gmail.com>
 
 =head1 COPYRIGHT AND LICENSE
 
-This software is Copyright (c) 2013 by Dave Rolsky.
+This software is Copyright (c) 2014 by Dave Rolsky.
 
 This is free software, licensed under:
 

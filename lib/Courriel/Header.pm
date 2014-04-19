@@ -1,8 +1,5 @@
 package Courriel::Header;
-{
-  $Courriel::Header::VERSION = '0.31';
-}
-
+$Courriel::Header::VERSION = '0.32';
 use strict;
 use warnings;
 use namespace::autoclean;
@@ -165,7 +162,7 @@ Courriel::Header - A single header's name and value
 
 =head1 VERSION
 
-version 0.31
+version 0.32
 
 =head1 SYNOPSIS
 
@@ -175,6 +172,8 @@ version 0.31
 =head1 DESCRIPTION
 
 This class represents a single header, which consists of a name and value.
+
+=encoding utf-8
 
 =head1 API
 
@@ -224,7 +223,7 @@ Zbigniew Łukasiak <zzbbyy@gmail.com>
 
 =head1 COPYRIGHT AND LICENSE
 
-This software is Copyright (c) 2013 by Dave Rolsky.
+This software is Copyright (c) 2014 by Dave Rolsky.
 
 This is free software, licensed under:
 
