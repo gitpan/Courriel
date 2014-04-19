@@ -1,3 +1,9 @@
+0.33     2014-04-19
+
+- Fixed tests so they pass with the most recent DateTime::Format::Mail (0.400)
+  as well as older versions.
+
+
 0.32     2014-04-19
 
 - Courriel parsing is now more liberal and will accept an email with mixed

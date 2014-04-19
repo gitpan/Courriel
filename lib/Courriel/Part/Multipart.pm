@@ -1,5 +1,5 @@
 package Courriel::Part::Multipart;
-$Courriel::Part::Multipart::VERSION = '0.32';
+$Courriel::Part::Multipart::VERSION = '0.33';
 use strict;
 use warnings;
 use namespace::autoclean;
@@ -118,7 +118,7 @@ Courriel::Part::Multipart - A part which contains other parts
 
 =head1 VERSION
 
-version 0.32
+version 0.33
 
 =head1 SYNOPSIS
 

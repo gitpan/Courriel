@@ -1,5 +1,5 @@
 package Courriel::Role::Part;
-$Courriel::Role::Part::VERSION = '0.32';
+$Courriel::Role::Part::VERSION = '0.33';
 use strict;
 use warnings;
 use namespace::autoclean;
