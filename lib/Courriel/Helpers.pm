@@ -1,5 +1,5 @@
 package Courriel::Helpers;
-$Courriel::Helpers::VERSION = '0.33';
+$Courriel::Helpers::VERSION = '0.34';
 use strict;
 use warnings;
 

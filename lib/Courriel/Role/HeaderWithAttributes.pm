@@ -1,5 +1,5 @@
 package Courriel::Role::HeaderWithAttributes;
-$Courriel::Role::HeaderWithAttributes::VERSION = '0.33';
+$Courriel::Role::HeaderWithAttributes::VERSION = '0.34';
 use strict;
 use warnings;
 use namespace::autoclean;

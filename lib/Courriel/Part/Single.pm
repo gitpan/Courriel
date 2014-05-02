@@ -1,5 +1,5 @@
 package Courriel::Part::Single;
-$Courriel::Part::Single::VERSION = '0.33';
+$Courriel::Part::Single::VERSION = '0.34';
 use strict;
 use warnings;
 use namespace::autoclean;
@@ -209,7 +209,7 @@ Courriel::Part::Single - A part which does not contain other parts, only content
 
 =head1 VERSION
 
-version 0.33
+version 0.34
 
 =head1 SYNOPSIS
 
