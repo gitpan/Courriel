@@ -1,5 +1,5 @@
 package Courriel::Headers;
-$Courriel::Headers::VERSION = '0.34';
+$Courriel::Headers::VERSION = '0.35';
 use strict;
 use warnings;
 use namespace::autoclean;
@@ -480,7 +480,7 @@ Courriel::Headers - The headers for an email part
 
 =head1 VERSION
 
-version 0.34
+version 0.35
 
 =head1 SYNOPSIS
 

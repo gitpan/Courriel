@@ -4,7 +4,7 @@
       "Dave Rolsky <autarch@urth.org>"
    ],
    "dynamic_config" : 0,
-   "generated_by" : "Dist::Zilla version 5.015, CPAN::Meta::Converter version 2.120921",
+   "generated_by" : "Dist::Zilla version 5.016, CPAN::Meta::Converter version 2.131560",
    "license" : [
       "artistic_2"
    ],
@@ -21,6 +21,9 @@
       },
       "develop" : {
          "requires" : {
+            "Test::CPAN::Changes" : "0.19",
+            "Test::More" : "0",
+            "Test::NoTabs" : "0",
             "Test::Pod" : "1.41"
          }
       },
@@ -39,7 +42,7 @@
             "Exporter" : "0",
             "File::Basename" : "0",
             "File::LibMagic" : "0",
-            "File::Slurp" : "0",
+            "File::Slurp::Tiny" : "0",
             "List::AllUtils" : "0",
             "List::MoreUtils" : "0.28",
             "MIME::Base64" : "0",
@@ -84,7 +87,7 @@
          "web" : "http://git.urth.org/Courriel.git"
       }
    },
-   "version" : "0.34",
+   "version" : "0.35",
    "x_contributors" : [
       "Zbigniew Łukasiak <zzbbyy@gmail.com>"
    ]

@@ -1,5 +1,5 @@
 package Courriel::Types::Internal;
-$Courriel::Types::Internal::VERSION = '0.34';
+$Courriel::Types::Internal::VERSION = '0.35';
 use strict;
 use warnings;
 use namespace::autoclean;

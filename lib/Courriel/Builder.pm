@@ -1,5 +1,5 @@
 package Courriel::Builder;
-$Courriel::Builder::VERSION = '0.34';
+$Courriel::Builder::VERSION = '0.35';
 use strict;
 use warnings;
 
@@ -17,7 +17,7 @@ use DateTime::Format::Mail;
 use Devel::PartialDump;
 use File::Basename qw( basename );
 use File::LibMagic;
-use File::Slurp qw( read_file );
+use File::Slurp::Tiny qw( read_file );
 use List::AllUtils qw( first );
 use MooseX::Params::Validate qw( pos_validated_list validated_list );
 use Scalar::Util qw( blessed reftype );
@@ -454,7 +454,7 @@ Courriel::Builder - Build emails with sugar
 
 =head1 VERSION
 
-version 0.34
+version 0.35
 
 =head1 SYNOPSIS
 
