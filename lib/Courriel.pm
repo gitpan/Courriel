@@ -1,5 +1,7 @@
 package Courriel;
-$Courriel::VERSION = '0.35';
+# git description: v0.35-6-g0fcadef
+$Courriel::VERSION = '0.36';
+
 use 5.10.0;
 
 use strict;
@@ -525,7 +527,7 @@ Courriel - High level email parsing and manipulation
 
 =head1 VERSION
 
-version 0.35
+version 0.36
 
 =head1 SYNOPSIS
 
@@ -788,9 +790,21 @@ button on this page: L<http://www.urth.org/~autarch/fs-donation.html>
 
 Dave Rolsky <autarch@urth.org>
 
-=head1 CONTRIBUTOR
+=head1 CONTRIBUTORS
+
+=for stopwords Gregory Oschwald Zbigniew Łukasiak
+
+=over 4
+
+=item *
+
+Gregory Oschwald <goschwald@maxmind.com>
+
+=item *
 
 Zbigniew Łukasiak <zzbbyy@gmail.com>
+
+=back
 
 =head1 COPYRIGHT AND LICENSE
 

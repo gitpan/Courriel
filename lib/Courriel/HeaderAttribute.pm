@@ -1,5 +1,5 @@
 package Courriel::HeaderAttribute;
-$Courriel::HeaderAttribute::VERSION = '0.35';
+$Courriel::HeaderAttribute::VERSION = '0.36';
 use strict;
 use warnings;
 use namespace::autoclean;
@@ -182,7 +182,7 @@ Courriel::HeaderAttribute - A single attribute belonging to a header
 
 =head1 VERSION
 
-version 0.35
+version 0.36
 
 =head1 SYNOPSIS
 
@@ -265,10 +265,6 @@ This class does the C<Courriel::Role::Streams> role.
 =head1 AUTHOR
 
 Dave Rolsky <autarch@urth.org>
-
-=head1 CONTRIBUTOR
-
-Zbigniew Łukasiak <zzbbyy@gmail.com>
 
 =head1 COPYRIGHT AND LICENSE
 

@@ -1,5 +1,5 @@
 package Email::Abstract::Courriel;
-$Email::Abstract::Courriel::VERSION = '0.35';
+$Email::Abstract::Courriel::VERSION = '0.36';
 use strict;
 use warnings;
 
@@ -55,7 +55,7 @@ Email::Abstract::Courriel - Email::Abstract wrapper for Courriel
 
 =head1 VERSION
 
-version 0.35
+version 0.36
 
 =head1 DESCRIPTION
 
@@ -71,10 +71,6 @@ L<Email::Abstract>, L<Courriel>.
 =head1 AUTHOR
 
 Dave Rolsky <autarch@urth.org>
-
-=head1 CONTRIBUTOR
-
-Zbigniew Łukasiak <zzbbyy@gmail.com>
 
 =head1 COPYRIGHT AND LICENSE
 

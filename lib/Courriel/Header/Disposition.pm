@@ -1,5 +1,5 @@
 package Courriel::Header::Disposition;
-$Courriel::Header::Disposition::VERSION = '0.35';
+$Courriel::Header::Disposition::VERSION = '0.36';
 use strict;
 use warnings;
 use namespace::autoclean;
@@ -110,7 +110,7 @@ Courriel::Header::Disposition - The content disposition for an email part
 
 =head1 VERSION
 
-version 0.35
+version 0.36
 
 =head1 SYNOPSIS
 
@@ -250,15 +250,11 @@ This class extends L<Courriel::Header>.
 
 =head1 ROLES
 
-This class does the L<Courriel::Role::HeaderWithAttributes> role.
+This class does the C<Courriel::Role::HeaderWithAttributes> role.
 
 =head1 AUTHOR
 
 Dave Rolsky <autarch@urth.org>
-
-=head1 CONTRIBUTOR
-
-Zbigniew Łukasiak <zzbbyy@gmail.com>
 
 =head1 COPYRIGHT AND LICENSE
 
